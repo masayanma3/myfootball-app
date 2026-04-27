@@ -308,30 +308,18 @@ const CORS_FALLBACK  = 'https://api.allorigins.win/get?url=';
 
 /* Build a proxied football-data URL and fetch with token in query string */
 async function footballFetch(path) {
-  /* football-data.org accepts token as query param as well as header */
-  const directUrl = `${FOOTBALL_DIRECT}${path}${path.includes('?')?'&':'?'}token=${FOOTBALL_API_TOKEN}`;
-
-  /* Try primary proxy first */
+  const targetUrl = 'https://api.football-data.org/v4' + path;
   try {
-    const res = await fetch(CORS_PRIMARY + encodeURIComponent(directUrl), {signal: AbortSignal.timeout(8000)});
-    if (!res.ok) throw new Error(`primary proxy HTTP ${res.status}`);
+    const res = await fetch('https://corsproxy.io/?' + encodeURIComponent(targetUrl), {
+      headers: { 'X-Auth-Token': FOOTBALL_API_TOKEN }
+    });
+    if (!res.ok) throw new Error('API取得エラー');
     return await res.json();
   } catch(e) {
-    console.warn('Primary proxy failed, trying fallback:', e.message);
-  }
-
-  /* Try allorigins fallback */
-  try {
-    const res = await fetch(CORS_FALLBACK + encodeURIComponent(directUrl), {signal: AbortSignal.timeout(10000)});
-    if (!res.ok) throw new Error(`fallback proxy HTTP ${res.status}`);
-    const wrapper = await res.json();
-    return JSON.parse(wrapper.contents);
-  } catch(e) {
-    console.error('Both proxies failed:', e.message);
+    console.error('Error:', e);
     throw e;
   }
 }
-
 /* RSS feeds via rss2json (free, no CORS issues) */
 const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const RSS_FEEDS = [
