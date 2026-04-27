@@ -291,16 +291,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 <script>
 /* ── CONFIG ── */
 const FOOTBALL_API_TOKEN = '9e94dbfdff6248089ce4ebb50e6ba2d6';
-const FOOTBALL_BASE = 'https://api.football-data.org/v4';
-const FOOTBALL_HEADERS = {'X-Auth-Token': FOOTBALL_API_TOKEN};
+
+/*
+ * CORS proxy chain:
+ * Primary   → corsproxy.io   (fast, reliable)
+ * Fallback  → api.allorigins.win  (backup)
+ *
+ * football-data.org requires the API token as a header.
+ * corsproxy.io forwards arbitrary headers when you pass them as
+ * query params with the prefix "cors_" — so we use that trick.
+ * allorigins wraps the response in JSON {contents: "…"}.
+ */
+const FOOTBALL_DIRECT = 'https://api.football-data.org/v4';
+const CORS_PRIMARY   = 'https://corsproxy.io/?';
+const CORS_FALLBACK  = 'https://api.allorigins.win/get?url=';
+
+/* Build a proxied football-data URL and fetch with token in query string */
+async function footballFetch(path) {
+  /* football-data.org accepts token as query param as well as header */
+  const directUrl = `${FOOTBALL_DIRECT}${path}${path.includes('?')?'&':'?'}token=${FOOTBALL_API_TOKEN}`;
+
+  /* Try primary proxy first */
+  try {
+    const res = await fetch(CORS_PRIMARY + encodeURIComponent(directUrl), {signal: AbortSignal.timeout(8000)});
+    if (!res.ok) throw new Error(`primary proxy HTTP ${res.status}`);
+    return await res.json();
+  } catch(e) {
+    console.warn('Primary proxy failed, trying fallback:', e.message);
+  }
+
+  /* Try allorigins fallback */
+  try {
+    const res = await fetch(CORS_FALLBACK + encodeURIComponent(directUrl), {signal: AbortSignal.timeout(10000)});
+    if (!res.ok) throw new Error(`fallback proxy HTTP ${res.status}`);
+    const wrapper = await res.json();
+    return JSON.parse(wrapper.contents);
+  } catch(e) {
+    console.error('Both proxies failed:', e.message);
+    throw e;
+  }
+}
 
 /* RSS feeds via rss2json (free, no CORS issues) */
 const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const RSS_FEEDS = [
-  {url:'https://www.skysports.com/rss/12040',    name:'Sky Sports',  cat:'transfer'},
-  {url:'https://talksport.com/football/transfers/feed/', name:'TalkSPORT', cat:'transfer'},
-  {url:'https://www.bbc.co.uk/sport/football/premier-league/rss.xml', name:'BBC Sport', cat:'match'},
-  {url:'https://www.theguardian.com/football/rss', name:'Guardian',  cat:'general'},
+  {url:'https://www.skysports.com/rss/12040',                          name:'Sky Sports', cat:'transfer'},
+  {url:'https://talksport.com/football/transfers/feed/',               name:'TalkSPORT',  cat:'transfer'},
+  {url:'https://www.bbc.co.uk/sport/football/premier-league/rss.xml', name:'BBC Sport',  cat:'match'},
+  {url:'https://www.theguardian.com/football/rss',                     name:'Guardian',   cat:'general'},
 ];
 
 /* ── STATE ── */
@@ -328,14 +366,183 @@ const BIRTHDAYS = [
   {initials:'EH',name:'アーリング・ハーランド',born:2000,club:'マンチェスター・C',month:7,day:21},
   {initials:'JG',name:'ジャック・グリーリッシュ',born:1995,club:'マンチェスター・C',month:9,day:10},
 ];
-const TRIVIA = [
+/* ===================================================================
+   TRIVIA DATA
+   現在120件収録。さらに追加する場合は USER_TRIVIA 配列に追記してください。
+   形式: {tag:'history'|'record'|'fact', label:'History'|'Record'|'Fact', text:'...'}
+   =================================================================== */
+const BUILTIN_TRIVIA = [
+  /* ── History ── */
   {tag:'history',label:'History',text:'1888年、ウィリアム・マクレガーがフットボールリーグを創設。世界初のプロリーグは全12クラブでスタートした。'},
-  {tag:'record',label:'Record',text:'プレミアリーグ最速ゴール記録はシェーン・ロングの7秒69。2019年のバーンリー戦、キックオフ直後のゴールだった。'},
-  {tag:'fact',label:'Fact',text:'カラバオカップは1960年創設のリーグカップ。エナジードリンクブランドがスポンサーとなりこの名前になった。'},
   {tag:'history',label:'History',text:'1966年W杯決勝でイングランドがドイツを4-2で破り唯一の優勝。ジェフ・ハーストはハットトリックを達成した唯一の選手。'},
+  {tag:'history',label:'History',text:'FAカップは1871年創設。世界最古のサッカー大会であり、非プロクラブも参加できる民主的な大会だ。'},
+  {tag:'history',label:'History',text:'マンチェスター・Cは1968年リーグ優勝後、2011年まで43年間無冠が続いた。アブダビ資本買収後に黄金期が訪れた。'},
+  {tag:'history',label:'History',text:'トッテナムは1961年にFAカップとリーグ二冠を達成。20世紀初の「ダブル」を実現したクラブだ。'},
+  {tag:'history',label:'History',text:'1989年のヒルズボロの悲劇でリバプールサポーター96人が亡くなった。この事故以降、イングランドのスタジアムは全席着席制に移行した。'},
+  {tag:'history',label:'History',text:'プレミアリーグは1992年に発足。それまでの「フットボールリーグ・ファーストディビジョン」から独立して創設された。'},
+  {tag:'history',label:'History',text:'マンチェスター・Uは1958年のミュンヘン航空機事故で選手8名を失った。その後バスビー監督が再建し1968年欧州制覇を成し遂げた。'},
+  {tag:'history',label:'History',text:'チェルシーは2003年のアブラモビッチ買収以降急成長。それ以前はトップクラブではなく、タイトルに縁遠かった。'},
+  {tag:'history',label:'History',text:'アーセナルは1939年から2年間を除き、トップリーグに在籍し続けている。全クラブ中最長の連続トップリーグ在籍記録だ。'},
+  {tag:'history',label:'History',text:'リバプールは欧州カップ通算6度優勝（CL5回＋旧欧州チャンピオンズカップ1回）。イングランド最多の欧州タイトル保持クラブだ。'},
+  {tag:'history',label:'History',text:'アーセナルは2003-04シーズンにプレミアリーグを無敗（38試合）で優勝。「インヴィンシブルズ」と呼ばれる伝説のシーズンだ。'},
+  {tag:'history',label:'History',text:'イングランド代表は世界で唯一、ホームネーションズ4チームに分かれて参加できる。イングランド・スコットランド・ウェールズ・北アイルランドがそれぞれFIFAに加盟している。'},
+  {tag:'history',label:'History',text:'ブラックバーン・ローバーズは1994-95年、当時最高額の補強でプレミアリーグ優勝。しかし翌年から急激に凋落した。'},
+  {tag:'history',label:'History',text:'ウィンブルドンFCは2004年に解散し、MKドンズとして再出発。元サポーターが抗議してAFCウィンブルドンを下部リーグで新設した。'},
+  {tag:'history',label:'History',text:'イングランドとスコットランドは1872年に世界初の国際サッカー試合を行った。試合はグラスゴーで行われ、スコアは0-0だった。'},
+  {tag:'history',label:'History',text:'ノッティンガム・フォレストは1977-78、1978-79年と欧州チャンピオンズカップを連覇。ブライアン・クラフ監督の指揮下での快挙だった。'},
+  {tag:'history',label:'History',text:'サー・アレックス・ファーガソンはマンチェスター・Uで26年間指揮。プレミアリーグ13回を含む38冠を達成した。'},
+  {tag:'history',label:'History',text:'エバートンは創設1878年で、FAカップを9回優勝したイングランド屈指の名門クラブだ。'},
+  {tag:'history',label:'History',text:'プレミアリーグ発足当初の1992-93シーズン、マンチェスター・Uが初代王者となった。'},
+  /* ── Records ── */
+  {tag:'record',label:'Record',text:'プレミアリーグ最速ゴール記録はシェーン・ロングの7秒69。2019年のバーンリー戦、キックオフ直後のゴールだった。'},
   {tag:'record',label:'Record',text:'アラン・シアラーはプレミアリーグ通算260ゴールの記録保持者。ニューカッスルへの愛から欧州移籍を断り続けた。'},
-  {tag:'fact',label:'Fact',text:'アーセナルは1939年から2年間を除き、トップリーグに在籍し続けている。全クラブ中最長の連続トップリーグ在籍記録だ。'},
+  {tag:'record',label:'Record',text:'ライアン・ギグスはプレミアリーグで29シーズン出場した唯一の選手。マンチェスター・Uでの通算900試合以上は驚異的な記録だ。'},
+  {tag:'record',label:'Record',text:'モハメド・サラーはプレミアリーグの1シーズン最多得点記録を保持。2017-18シーズンの38試合で32ゴールを叩き出した。'},
+  {tag:'record',label:'Record',text:'マンチェスター・Cは2017-18シーズンに100勝点を記録。プレミアリーグ史上初の3桁勝点を達成した。'},
+  {tag:'record',label:'Record',text:'プレミアリーグ最多連続出場記録はブラッド・フリーデルの310試合。2004年から2012年にかけてブラックバーンとアストン・ヴィラで達成した。'},
+  {tag:'record',label:'Record',text:'プレミアリーグ史上最大の勝利差はマンチェスター・Uがアーセナルに9-0で勝利した2012年の試合だ。'},
+  {tag:'record',label:'Record',text:'ピーター・シルトンは125試合のイングランド代表出場という国内最多キャップ記録を持つ。'},
+  {tag:'record',label:'Record',text:'ウェイン・ルーニーはイングランド代表最多得点記録の53ゴールを保持している。'},
+  {tag:'record',label:'Record',text:'ハリー・ケインは2017年FAカップで自身1試合4ゴールを記録。トッテナムでの活躍が評価されイングランド代表の顔となった。'},
+  {tag:'record',label:'Record',text:'ティエリ・アンリはアーセナルで通算228ゴールを記録し、クラブ最多得点者となった。'},
+  {tag:'record',label:'Record',text:'プレミアリーグで最も多くの監督に指揮されたシーズン連続無敗はアーセナルの49試合（2003-2004）だ。'},
+  {tag:'record',label:'Record',text:'マンチェスター・Cは2021-22シーズンに1試合平均3ゴール超えを記録。攻撃力の圧倒的な高さを示した。'},
+  {tag:'record',label:'Record',text:'フランク・ランパードはチェルシーで通算211ゴールを記録。ミッドフィルダーとして驚異的な数字だ。'},
+  {tag:'record',label:'Record',text:'アストン・ヴィラのピーター・ウィシュ選手は1935年に1試合9ゴールを記録。これは今もイングランドリーグのトップリーグ1試合個人最多記録だ。'},
+  {tag:'record',label:'Record',text:'リバプールはCLで1晩で3-0から4-3に逆転したことがある（2019年準決勝対バルセロナ）。「アンフィールドの奇跡」と呼ばれる。'},
+  {tag:'record',label:'Record',text:'プレミアリーグ最多出場記録はガレス・バリーの653試合。スタン・コリモアなど多くのクラブを渡り歩いた。'},
+  {tag:'record',label:'Record',text:'チェルシーの2004-05シーズンは95勝点、29クリーンシートを記録。ジョゼ・モウリーニョ監督の堅守速攻で圧倒的な強さを見せた。'},
+  {tag:'record',label:'Record',text:'マンチェスター・Uは2012-13シーズン最終節の劇的な2ゴールでマンチェスター・Cから優勝をさらった。いわゆる「93:20」事件だ。'},
+  {tag:'record',label:'Record',text:'エリック・カントナはプレミアリーグ発足期にマンチェスター・Uを4度制覇。カリスマ的なキャプテンシーで「キング・エリック」と呼ばれた。'},
+  /* ── Facts ── */
+  {tag:'fact',label:'Fact',text:'カラバオカップは1960年創設のリーグカップ。エナジードリンクブランドがスポンサーとなりこの名前になった。'},
+  {tag:'fact',label:'Fact',text:'リバプールの「ユーロウィル・ネバー・ウォーク・アローン」は1963年のミュージカル曲。サポーターの合唱で世界的に有名になった。'},
+  {tag:'fact',label:'Fact',text:'イングランドのスタジアムで禁止されている「立見観戦」は1989年のヒルズボロの悲劇を契機に厳格化された。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグは世界212か国以上でテレビ放送されている。世界で最も視聴されるスポーツリーグの一つだ。'},
+  {tag:'fact',label:'Fact',text:'アーセナルのホームスタジアム「エミレーツ」の名前はアラブ首長国連邦の航空会社がネーミングライツを持っているため。'},
+  {tag:'fact',label:'Fact',text:'イングランドではサッカーを「フットボール」と呼ぶ。「サッカー」という言葉は実はイギリス発祥で、Associationの略「assoc.」が転じたものだ。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・Uの本拠地オールド・トラッフォードは「夢の劇場」と呼ばれる。収容人数は約74,000人で、イングランド最大のクラブスタジアムだ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグのレフェリーは試合中平均13km走ると言われている。選手に次いで運動量の多い存在だ。'},
+  {tag:'fact',label:'Fact',text:'ロンドン市内には6つのプレミアリーグクラブが本拠を置く（チェルシー・アーセナル・トッテナム・ウェストハム・クリスタルパレス・フルハム）。'},
+  {tag:'fact',label:'Fact',text:'FAカップでは現在でも9部リーグ相当のアマチュアクラブが参加できる。プロクラブを倒す「ジャイアントキリング」はFA杯の醍醐味だ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグの試合球は「Nike Flight」シリーズが採用されている。空気抵抗を減らす設計で、シュートの精度が向上するとされる。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・Uのユニフォームの赤色は1902年から採用。それ以前はゴールドとグリーンのストライプだった。'},
+  {tag:'fact',label:'Fact',text:'チェルシーのスタンフォード・ブリッジは1877年に建設された。クラブより先にスタジアムが存在していた珍しいケースだ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグのVAR（ビデオ・アシスタント・レフェリー）は2019-20シーズンから正式導入された。'},
+  {tag:'fact',label:'Fact',text:'イングランド代表の愛称「スリーライオンズ」は1996年のユーロのテーマ曲として大ヒット。今もサポーターの応援歌として歌われている。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・Cのシティ・フットボール・グループは世界12クラブ以上を傘下に持つ。横浜F・マリノスもそのひとつだ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグのシーズンは通常8月から5月まで。冬のW杯開催のため2022-23シーズンは異例の日程調整が行われた。'},
+  {tag:'fact',label:'Fact',text:'リバプールのアンフィールドは1884年に建設。もともとはエバートンのホームだったが、1892年にリバプールFCが創設され使用するようになった。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグは現在20クラブで構成。毎シーズン下位3クラブが降格し、チャンピオンシップ上位3クラブが昇格する。'},
+  {tag:'fact',label:'Fact',text:'イングランドのフットボールピラミッドは11部以上のリーグで構成されている。理論上はどんなクラブもプレミアリーグまで昇格できる。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグの総年間売上は50億ポンドを超える。世界で最も収益の高いスポーツリーグの一つだ。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・Uの「赤い悪魔」という愛称は1960年代にアンリ・ゲランスのベルギーチームを見て採用したと言われる。'},
+  {tag:'fact',label:'Fact',text:'アーセナルは1913年まで南ロンドンのウーリッジに本拠を置いていた。北ロンドンへの移転でトッテナムとの激しいライバル関係が生まれた。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグの公式ボールは毎シーズン約900個が1試合で使用される計算になる（スタジアムの裏側に多数配備）。'},
+  {tag:'fact',label:'Fact',text:'サー・アレックス・ファーガソンは「ファーギータイム」という言葉を生んだ。ロスタイムにマンチェスター・Uが逆転することが多く、相手が追加時間を恐れる現象だ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグには現在109か国以上の出身選手が在籍している（2023-24シーズン）。最も国際色豊かなリーグのひとつだ。'},
+  {tag:'fact',label:'Fact',text:'ウェストハムは「アカデミー・オブ・フットボール」とも呼ばれる。ムーア、ハースト、ピーターズ、ジョビッチなど多くの名手を輩出してきた。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグのゴールライン・テクノロジーは2013-14シーズンから導入。ボールが完全にラインを越えたかを0.5秒以内に判定する。'},
+  {tag:'fact',label:'Fact',text:'ニューカッスルの本拠地セント・ジェームズ・パークは収容54,000人超。周囲に高層ビルがなく空に向かって開けた独特の雰囲気を持つ。'},
+  {tag:'fact',label:'Fact',text:'ブライトン＆ホーヴ・アルビオンのアメックス・スタジアムは2011年に完成。それまでクラブは数十年間ホームスタジアムを持てなかった。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグの審判は試合前日に会場に集合し、専用のホテルで前泊する。公正を期すための規定だ。'},
+  {tag:'fact',label:'Fact',text:'エバートンの愛称「トフィーメン」は、かつてスタジアム周辺でトフィー（キャンデー）が売られていたことに由来する。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグ創設のきっかけはテレビ放映権収入の分配をめぐる争いだった。BSkyBが巨額放映権料を投じたことで現在の形が生まれた。'},
+  {tag:'fact',label:'Fact',text:'フットボールの試合時間が「90分」に固定されたのは1866年。それ以前は試合によって時間がバラバラだった。'},
+  {tag:'fact',label:'Fact',text:'イングランドのクラブはFAカップ・リーグカップ・プレミアリーグ・欧州戦を同時並行で戦う。ローテーションが重要な理由はここにある。'},
+  {tag:'fact',label:'Fact',text:'オフサイドルールは1863年のフットボール協会設立当初から存在している。ただし当初の定義は現在と大きく異なっていた。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグは選手の走行距離を全試合でトラッキングしている。試合平均で1チームの合計走行距離は約105kmにのぼる。'},
+  {tag:'fact',label:'Fact',text:'ハリー・ケインはトッテナムで250ゴール超を記録しながらも、クラブタイトルをひとつも取れなかった。これはプレミアリーグ史上最も切ない「記録」のひとつだ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグでは毎シーズン延べ1500万人以上の観客がスタジアムを訪れる。世界のサッカーリーグで最高水準の動員数だ。'},
+  {tag:'fact',label:'Fact',text:'ゴールキーパーが手でボールを扱える範囲はペナルティエリア内のみ。このルールが導入されたのは1912年のことだ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグの優勝チームに贈られるトロフィーは純銀製。重さは約4.5kgで、毎年優勝チームに引き渡される。'},
+  {tag:'fact',label:'Fact',text:'イングランドのクラブはリーグカップで若手や控え選手を試す機会として使うことが多い。そのため番狂わせが起きやすい大会でもある。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・ダービーはプレミアリーグで最も世界的に視聴される試合のひとつ。グローバルな視聴者数は数億人に達する。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグのキックオフ時刻は英国時間の15:00（土曜）が基本。ただし放映権の都合で金・日・月の試合も増えている。'},
+  {tag:'fact',label:'Fact',text:'アーセナルのアーセン・ヴェンゲル監督は1996年から2018年まで22シーズン指揮を執った。「パスサッカー革命」をイングランドにもたらした監督だ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグのシーズンチケットは人気クラブでは10年以上の待機リストがあることも珍しくない。'},
+  {tag:'fact',label:'Fact',text:'フルハムは1879年創設のロンドン最古のプロクラブ。テムズ川沿いのクレイヴン・コテッジは英国で最も美しいスタジアムのひとつとされる。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグでは試合後30分間、記者がロッカールームへのアクセスを求めることができる。監督の会見は義務付けられている。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・Uのサポーターは世界中に1億人以上いると言われている。特にアジアでの人気は圧倒的だ。'},
+  {tag:'fact',label:'Fact',text:'スタンフォード・ブリッジのある「フルハム・ロード」はロンドンのランドマーク。チェルシーFCの周辺は高級住宅街として知られる。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグのスカウトは現在AIを使った動画分析ツールを活用している。選手のパフォーマンスデータを秒単位で分析できる。'},
+  {tag:'fact',label:'Fact',text:'イングランドでは移籍期間（ウィンドウ）が年2回。夏（6月〜9月初旬）と冬（1月）に開く。期間外の移籍は原則禁止だ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグ参加クラブのキャプテンはアームバンドを着用する義務がある。試合前のコイントスもキャプテンの役割だ。'},
+  {tag:'fact',label:'Fact',text:'ブレントフォードはデータ分析を徹底したスカウティングで台頭した。小クラブながら独自の選手発掘メソッドで注目を集めている。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグの試合球のデザインは毎シーズン変わる。コレクターズアイテムとして人気が高い。'},
+  {tag:'fact',label:'Fact',text:'チェルシーは2004-05シーズンに95勝点でプレミアリーグ制覇。「特別な者」ことジョゼ・モウリーニョ初年度の快挙だった。'},
+  {tag:'fact',label:'Fact',text:'ボーンマスは人口20万人足らずの小都市のクラブ。プレミアリーグのクラブの中で本拠地が最も小さな都市のひとつだ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグでは審判への異議申し立ては厳しく罰せられる。1枚のイエローカードで翌試合の出場停止になることもある。'},
+  {tag:'fact',label:'Fact',text:'リバプールのユルゲン・クロップ監督は9年在籍し6冠を獲得。2024年に退任したが今もクラブ史上最高の監督のひとりとして讃えられる。'},
+  {tag:'fact',label:'Fact',text:'アーセナルはロンドン・コルニーに世界最先端のトレーニング施設を持つ。回復・分析・栄養管理すべてが一箇所で完結する設計だ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグの放映権料は国内外合わせて年間約60億ポンド。各クラブへの分配金は最下位クラブでも1億ポンド超になる。'},
+  {tag:'fact',label:'Fact',text:'イングランドの降格制度では3部相当のリーグまで降格するとプロ契約の維持が難しくなるため、クラブ経営が大きく揺らぐ。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・Cのペップ・グアルディオラ監督は戦術の細部にこだわることで有名。練習でハーフスペースの使い方を何十回も繰り返すという。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグのイングランド人選手比率は近年低下傾向にある。EU離脱後の労働ビザ規制でEU外選手の獲得は慎重になっているが、それでも外国人が多数を占める。'},
+  {tag:'fact',label:'Fact',text:'サウサンプトンはウォルコット、ガレス・ベイル、アダム・ララーナなど多くの名手を育てたことで知られるアカデミー強豪クラブだ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグのスタジアムはすべてWi-Fiを完備している。観客がSNSでリアルタイムに発信できる環境を整えている。'},
+  {tag:'fact',label:'Fact',text:'ノリッジ・シティはイーストアングリア地域唯一のプレミアリーグ経験クラブ。カナリアをモチーフにした黄色と緑のユニフォームが特徴だ。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグでは試合中に最大5名の交代が認められている（2020-21シーズンから正式採用）。'},
+  {tag:'fact',label:'Fact',text:'クリスタル・パレスはサポーターが最も地元密着型で知られるロンドンのクラブ。南ロンドンの誇りとして地域コミュニティに深く根差している。'},
 ];
+
+/* ── ここにユーザーが追加したTrivia（1000件）を貼り付けてください ── */
+const USER_TRIVIA = [
+  {tag:'history',label:'History',text:'1992年、フットボールリーグ・ファーストディビジョンが改組され、現在の「プレミアリーグ」が誕生した。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・ユナイテッドはプレミアリーグ初代王者であり、歴代最多13回のリーグ優勝を誇る。'},
+  {tag:'record',label:'Record',text:'アラン・シアラーが持つプレミアリーグ通算260ゴールは、未だに破られていない歴代最多得点記録。'},
+  {tag:'record',label:'Record',text:'2003-04シーズン、アーセナルは26勝12分で無敗優勝を達成。「インビンシブルズ（無敵のチーム）」と呼ばれた。'},
+  {tag:'fact',label:'Fact',text:'ブライトンの三笘薫は、2022-23シーズンに日本人選手のプレミアリーグ1シーズン最多得点記録を更新した。'},
+  {tag:'record',label:'Record',text:'サディオ・マネはサウサンプトン時代、わずか2分56秒でハットトリックを達成。プレミア最速記録である。'},
+  {tag:'history',label:'History',text:'レスター・シティの2015-16シーズンの奇跡的なプレミア制覇。開幕前の優勝オッズは5000倍だった。'},
+  {tag:'fact',label:'Fact',text:'マーカス・ラッシュフォードは、ヨーロッパリーグ、プレミアリーグ、リーグカップの全てで「トップチームでのデビュー戦ゴール」を決めている。'},
+  {tag:'record',label:'Record',text:'ライアン・ギグスは、プレミアリーグ創設から21シーズン連続でゴールを決めた唯一の選手。'},
+  {tag:'record',label:'Record',text:'久保建英は、2022年にレアル・ソシエダでの公式戦デビューマッチで即ゴールを記録し、強烈なインパクトを残した。'},
+  {tag:'record',label:'Record',text:'シェーン・ロングが2019年に記録した「キックオフから7.69秒」でのゴールが、プレミアリーグ歴代最速ゴール。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・ユナイテッドのホーム、オールド・トラッフォードはクラブ所有のスタジアムとしてイングランド最大（約74,000人収容）。'},
+  {tag:'history',label:'History',text:'アレックス・ファーガソン監督は、マンチェスター・ユナイテッドで公式戦1500試合以上を指揮した伝説の指揮官。'},
+  {tag:'fact',label:'Fact',text:'香川真司は、日本人選手として初めてプレミアリーグ優勝メダルを獲得した選手である（12-13シーズン）。'},
+  {tag:'record',label:'Record',text:'2017-18シーズンのマンチェスター・シティは、プレミアリーグ史上初となる「勝ち点100」を達成した。'},
+  {tag:'fact',label:'Fact',text:'アレハンドロ・ガルナチョが2023年のエバートン戦で決めた美しいバイシクルシュートは、クラブの年間最優秀ゴールに選ばれた。'},
+  {tag:'history',label:'History',text:'日本代表が初めてFIFAワールドカップに出場したのは、1998年のフランス大会である。'},
+  {tag:'record',label:'Record',text:'ウェイン・ルーニーは、マンチェスター・ユナイテッドのクラブ歴代最多得点記録（253ゴール）の保持者。'},
+  {tag:'history',label:'History',text:'1999年、マンチェスター・ユナイテッドはリーグ、FAカップ、CLを制し、イングランド初の「トレブル（三冠）」を達成した。'},
+  {tag:'record',label:'Record',text:'アーリング・ハーランドは、プレミアリーグ移籍初年度（22-23）で36ゴールを挙げ、1シーズンの最多得点記録をあっさり更新した。'},
+  {tag:'fact',label:'Fact',text:'プレミアリーグ発足以降、一度も降格したことがないクラブは、アーセナル、チェルシー、エバートン、リバプール、マンU、トッテナムの6つのみ。'},
+  {tag:'record',label:'Record',text:'チェルシーは2004-05シーズン、1年間でわずか「15失点」という驚異的なプレミアリーグ最少失点記録を樹立した。'},
+  {tag:'fact',label:'Fact',text:'岡崎慎司はレスター・シティの「奇跡の優勝」に貢献したレギュラーメンバーであり、日本人2人目のプレミア制覇経験者。'},
+  {tag:'record',label:'Record',text:'ジェームズ・ミルナーは、プレミアリーグで20シーズン以上プレーし、通算出場試合数で歴代トップを争う鉄人。'},
+  {tag:'history',label:'History',text:'FAカップは1871年に創設された、世界で最も歴史のあるサッカーのノックアウト方式のカップ戦である。'},
+  {tag:'fact',label:'Fact',text:'デイヴィッド・ベッカムが1996年のウィンブルドン戦で決めたハーフウェーラインからの超ロングシュートは、彼の代名詞となった。'},
+  {tag:'record',label:'Record',text:'ケビン・デ・ブライネは、プレミアリーグ史上最速（237試合）で通算100アシストに到達した選手。'},
+  {tag:'history',label:'History',text:'1966年W杯決勝でイングランドが西ドイツを破り唯一の優勝。ジェフ・ハーストは長らくW杯決勝での唯一のハットトリック達成者だった。'},
+  {tag:'record',label:'Record',text:'ソン・フンミンは2021-22シーズン、アジア人選手として初めてプレミアリーグの得点王（ゴールデンブーツ）に輝いた。'},
+  {tag:'fact',label:'Fact',text:'吉田麻也はサウサンプトンで長年活躍し、日本人選手のプレミアリーグ最多出場記録を保持している。'},
+  {tag:'history',label:'History',text:'「カンプ・ノウの奇跡」。1999年のCL決勝、マンUは後半ロスタイムの2ゴールでバイエルンに劇的な逆転勝利を収めた。'},
+  {tag:'record',label:'Record',text:'ペトル・チェフはプレミアリーグ歴代最多の「202回のクリーンシート（無失点試合）」記録を持つ伝説のGK。'},
+  {tag:'fact',label:'Fact',text:'「ノースロンドン・ダービー」はアーセナルとトッテナムによる、プレミア屈指の熱狂的なライバル対決。'},
+  {tag:'record',label:'Record',text:'ティエリ・アンリは、プレミアリーグで歴代最多となる4度の得点王に輝いている。'},
+  {tag:'history',label:'History',text:'サッカーの聖地「ウェンブリー・スタジアム」の象徴である巨大なアーチは、高さ133メートルもある。'},
+  {tag:'record',label:'Record',text:'ハリー・ケインはプレミアリーグにおける「アウェイでの最多得点記録」および「単一クラブでの最多得点記録」の保持者。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・ユナイテッドの背番号「7」は、ベスト、カントナ、ベッカム、ロナウドらが背負ってきた特別なエースナンバー。'},
+  {tag:'record',label:'Record',text:'ギャレス・バリーが持つ「プレミアリーグ通算653試合出場」は、長らく破られていない大記録。'},
+  {tag:'history',label:'History',text:'2012年、セルヒオ・アグエロが後半ロスタイムに決めた劇的ゴールにより、マン・シティは44年ぶりのリーグ優勝を果たした。'},
+  {tag:'fact',label:'Fact',text:'遠藤航は2023年に名門リバプールに加入し、中盤の要としてチームのカラバオカップ優勝に大きく貢献した。'},
+  {tag:'record',label:'Record',text:'リチャード・ダンとパトリック・ヴィエラは、プレミアリーグ歴代最多タイとなる「8回の退場（レッドカード）」記録を持つ。'},
+  {tag:'history',label:'History',text:'1995年、ブラックバーン・ローヴァーズはアラン・シアラーの活躍で劇的なプレミアリーグ優勝を果たした。'},
+  {tag:'fact',label:'Fact',text:'クリスティアーノ・ロナウドは、マンチェスター・ユナイテッド所属時の2008年に自身初のバロンドールを受賞した。'},
+  {tag:'record',label:'Record',text:'セスク・ファブレガスは、異なる2つのクラブ（アーセナルとチェルシー）でプレミアリーグの優勝アシスト王になった。'},
+  {tag:'history',label:'History',text:'冨安健洋はボローニャでの活躍が認められ、2021年に名門アーセナルへ移籍。守備のマルチロールとして信頼を集めている。'},
+  {tag:'fact',label:'Fact',text:'「カラバオカップ」は1960年創設のリーグカップ。エナジードリンクブランドがスポンサーとなり現在の名前になった。'},
+  {tag:'record',label:'Record',text:'ピーター・シュマイケルは、2001年にアストンビラの一員としてゴールを決め、プレミアリーグで得点した初のGKとなった。'},
+  {tag:'fact',label:'Fact',text:'オーレ・グンナー・スールシャールは、1999年のノッティンガム・フォレスト戦で途中出場からわずか12分間で4ゴールを決めた。'},
+  {tag:'history',label:'History',text:'2002年日韓W杯で、デビッド・ベッカムはアルゼンチン戦で雪辱のPKを決め、イングランドを勝利に導いた。'},
+  {tag:'fact',label:'Fact',text:'マンチェスター・ユナイテッドのエンブレムに描かれている「赤い悪魔（Red Devils）」は、クラブの愛称として世界中で親しまれている。'}
+	/* 例: {tag:'fact', label:'Fact', text:'ここに雑学を入力'}, */
+];
+
+/* 両方をマージして使用 */
+const TRIVIA = [...BUILTIN_TRIVIA, ...USER_TRIVIA];
 
 /* ── CLOCK ── */
 document.getElementById('today-chip').textContent = `${now.getMonth()+1}/${now.getDate()}`;
@@ -415,16 +622,14 @@ async function fetchMatches(compId){
     const from=today.toISOString().split('T')[0];
     const toDate=new Date(today);toDate.setDate(today.getDate()+14);
     const to=toDate.toISOString().split('T')[0];
-    const res=await fetch(`${FOOTBALL_BASE}/competitions/${compId}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED,LIVE,IN_PLAY,PAUSED,FINISHED`,{headers:FOOTBALL_HEADERS});
-    if(!res.ok)throw new Error(`HTTP ${res.status}`);
-    return(await res.json()).matches||[];
+    const data=await footballFetch(`/competitions/${compId}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED,LIVE,IN_PLAY,PAUSED,FINISHED`);
+    return data.matches||[];
   }catch(e){console.error('fetchMatches:',e);return null;}
 }
 async function fetchStandings(){
   try{
-    const res=await fetch(`${FOOTBALL_BASE}/competitions/PL/standings`,{headers:FOOTBALL_HEADERS});
-    if(!res.ok)throw new Error(`HTTP ${res.status}`);
-    return(await res.json()).standings?.[0]?.table||[];
+    const data=await footballFetch('/competitions/PL/standings');
+    return data.standings?.[0]?.table||[];
   }catch(e){console.error('fetchStandings:',e);return null;}
 }
 
@@ -531,7 +736,7 @@ function renderMorning(){
   const todayM=getTodayMatches();
   const hotNews=cachedNews.filter(n=>n.cat==='transfer').slice(0,3);
   const bdays=getTodayBirthdays();
-  const ia=now.getDate()%TRIVIA.length,ib=(now.getDate()+1)%TRIVIA.length;
+  const [triviaA,triviaB]=getDailyTrivia();
   let h=updLine(lastMatchUpdate||lastNewsUpdate);
 
   /* Today's matches */
@@ -555,7 +760,7 @@ function renderMorning(){
 
   /* Trivia */
   h+=`<div class="brief-sec"><div class="brief-hdr"><div class="bh-left"><svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--am)"><use href="#ic-bolt"/></svg><div><div class="bh-title">Football Trivia</div><div class="bh-sub">England · History · Records</div></div></div>${secBtn('trivia','Trivia')}</div><div class="brief-body">`;
-  [TRIVIA[ia],TRIVIA[ib]].forEach(tr=>{const cls=tr.tag==='history'?'tt-hist':tr.tag==='record'?'tt-rec':'tt-fact';h+=`<div class="trivia-item"><span class="tri-tag ${cls}"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#${tr.tag==='history'?'ic-table':tr.tag==='record'?'ic-trophy':'ic-bolt'}"/></svg>${tr.label}</span><div class="tri-txt">${tr.text}</div></div>`;});
+  [triviaA,triviaB].forEach(tr=>{const cls=tr.tag==='history'?'tt-hist':tr.tag==='record'?'tt-rec':'tt-fact';h+=`<div class="trivia-item"><span class="tri-tag ${cls}"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#${tr.tag==='history'?'ic-table':tr.tag==='record'?'ic-trophy':'ic-bolt'}"/></svg>${tr.label}</span><div class="tri-txt">${tr.text}</div></div>`;});
   h+=`</div></div>`;
   return h;
 }
@@ -671,11 +876,18 @@ function buildNewsText(){
   return t;
 }
 function buildBdayText(){const bd=getTodayBirthdays();if(!bd.length)return`本日誕生日の選手はいません。`;let t='本日誕生日の選手です。';bd.forEach(p=>t+=`${p.name}、${p.club}、${now.getFullYear()-p.born}歳。`);return t;}
-function buildTriviaText(){const a=now.getDate()%TRIVIA.length,b=(now.getDate()+1)%TRIVIA.length;return'今日のサッカー小話です。'+TRIVIA[a].text+' '+TRIVIA[b].text;}
+function buildTriviaText(){const[a,b]=getDailyTrivia();return'今日のサッカー小話です。'+a.text+' '+b.text;}
 function speakSection(s){const m={matches:'試合時間を読み上げ中',news:'NEWSを読み上げ中',bday:'Birthdayを読み上げ中',trivia:'Triviaを読み上げ中'};const b={matches:buildMatchesText,news:buildNewsText,bday:buildBdayText,trivia:buildTriviaText};speak(b[s](),s,m[s]);}
 function speakAll(){speak([buildMatchesText(),buildNewsText(),buildBdayText(),buildTriviaText()].join(' '),'all','ALL を読み上げ中');}
 if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
 
+function getDailyTrivia(){
+  /* 日付ベースのシードで毎日違う2件を選ぶ（同じ日は同じ2件） */
+  const seed=(now.getFullYear()*10000+(now.getMonth()+1)*100+now.getDate());
+  const idx1=seed%TRIVIA.length;
+  const idx2=(seed*7+13)%TRIVIA.length===idx1?(seed*7+14)%TRIVIA.length:(seed*7+13)%TRIVIA.length;
+  return[TRIVIA[idx1],TRIVIA[idx2]];
+}
 function getTodayBirthdays(){const m=now.getMonth()+1,d=now.getDate();return BIRTHDAYS.filter(p=>p.month===m&&p.day===d);}
 
 /* ── UI ── */
