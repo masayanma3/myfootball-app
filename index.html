@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="My Football">
+<meta name="theme-color" content="#080810">
+<title>My Football</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#080810;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-webkit-text-size-adjust:100%;color:#e8e8f8}
+:root{
+  --bg:#080810;--bg2:#0f0f1a;--bg3:#161625;
+  --pk:#ff2d78;--pk2:#ff6fa8;--pk-dim:rgba(255,45,120,.13);--pk-glow:rgba(255,45,120,.32);
+  --cy:#00e5ff;--cy2:#80f0ff;--cy-dim:rgba(0,229,255,.10);--cy-glow:rgba(0,229,255,.28);
+  --gr:#00ff99;--gr-dim:rgba(0,255,153,.10);
+  --am:#ffb300;--am-dim:rgba(255,179,0,.10);
+  --txt:#e8e8f8;--txt2:#9090b0;--txt3:#4a4a6a;
+  --bdr:rgba(255,45,120,.2);
+  --safe-top:env(safe-area-inset-top);
+  --safe-bottom:env(safe-area-inset-bottom);
+}
+.shell{display:flex;flex-direction:column;height:100vh;height:100dvh;background:var(--bg);overflow:hidden}
+.sbar{padding:calc(var(--safe-top) + 10px) 18px 6px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--txt2);background:var(--bg);flex-shrink:0}
+.sbar-r{display:flex;align-items:center;gap:8px}
+.hdr{padding:8px 14px 0;flex-shrink:0}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-box{width:36px;height:36px;background:var(--pk-dim);border:1px solid var(--pk);border-radius:10px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 6px var(--pk-glow));flex-shrink:0}
+.logo-name{font-size:21px;font-weight:700;color:var(--txt);letter-spacing:.5px;text-transform:uppercase}
+.logo-sub{font-size:10px;color:var(--cy);letter-spacing:.12em;text-transform:uppercase;margin-top:1px}
+.header-right{display:flex;align-items:center;gap:8px}
+.date-chip{font-size:11px;color:var(--cy2);background:var(--cy-dim);border:0.5px solid rgba(0,229,255,.3);padding:4px 10px;border-radius:4px;white-space:nowrap}
+.refresh-btn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:6px;border:0.5px solid var(--bdr);background:var(--pk-dim);cursor:pointer;transition:all .2s}
+.refresh-btn:active{transform:scale(0.9)}
+.refresh-btn.spinning svg{animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.neon-line{height:1px;background:linear-gradient(90deg,transparent,var(--pk) 30%,var(--cy) 70%,transparent);margin:0 14px;opacity:.5;flex-shrink:0}
+
+/* TTS bar */
+.tts-bar{background:var(--bg2);border-bottom:0.5px solid var(--bdr);padding:8px 12px;display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+.tts-bar-top{display:flex;align-items:center;gap:6px}
+.tts-label{font-size:10px;font-weight:700;color:var(--cy);text-transform:uppercase;letter-spacing:.1em;flex-shrink:0}
+.tts-all-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:4px;border:1px solid var(--pk);background:var(--pk-dim);color:var(--pk2);font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.08em;flex-shrink:0;min-height:36px;transition:all .15s}
+.tts-all-btn.speaking{background:var(--pk);color:#fff;filter:drop-shadow(0 0 8px var(--pk-glow))}
+.tts-stop-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:4px;border:1px solid var(--txt3);background:transparent;color:var(--txt3);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;min-height:36px}
+.tts-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tts-chips::-webkit-scrollbar{display:none}
+.tts-chip{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:3px;border:0.5px solid var(--txt3);font-size:11px;font-weight:700;color:var(--txt3);background:transparent;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;min-height:36px;transition:all .15s}
+.tts-chip.speaking{border-color:var(--cy);color:var(--cy);background:var(--cy-dim)}
+.tts-status{font-size:11px;color:var(--txt3);display:flex;align-items:center;gap:6px;min-height:16px}
+.tts-wave{display:flex;align-items:flex-end;gap:2px;height:14px}
+.tts-wave span{width:3px;background:var(--cy);border-radius:1px;animation:wave .8s ease-in-out infinite}
+.tts-wave span:nth-child(2){animation-delay:.1s}.tts-wave span:nth-child(3){animation-delay:.2s}
+.tts-wave span:nth-child(4){animation-delay:.3s}.tts-wave span:nth-child(5){animation-delay:.4s}
+@keyframes wave{0%,100%{height:4px}50%{height:14px}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
+
+/* tabs */
+.tabbar{display:flex;overflow-x:auto;scrollbar-width:none;padding:0 10px;border-bottom:1px solid rgba(255,45,120,.15);flex-shrink:0;-webkit-overflow-scrolling:touch}
+.tabbar::-webkit-scrollbar{display:none}
+.tb{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:10px 12px;font-size:11px;font-weight:700;color:var(--txt3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em;transition:color .15s;min-height:44px}
+.tb.on{color:var(--pk);border-bottom-color:var(--pk);filter:drop-shadow(0 0 6px var(--pk-glow))}
+
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 13px 8px}
+.body::-webkit-scrollbar{display:none}
+.slbl{font-size:10px;font-weight:700;color:var(--cy);letter-spacing:.15em;text-transform:uppercase;margin:10px 0 6px;display:flex;align-items:center;gap:6px}
+.slbl::after{content:'';flex:1;height:0.5px;background:linear-gradient(90deg,var(--cy-dim),transparent)}
+
+/* match card */
+.mc{background:var(--bg2);border:0.5px solid var(--bdr);border-radius:6px;padding:11px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)}
+.mc.epl-a{border-left:2px solid var(--pk)}
+.mc.fa-a{border-left:2px solid #e83030}
+.mc.ucl-a{border-left:2px solid var(--am)}
+.mc-body{flex:1;min-width:0}
+.mc-comp{font-size:10px;color:var(--txt3);margin-bottom:3px;display:flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.04em;flex-wrap:wrap}
+.mc-teams{font-size:14px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-teams em{font-style:normal;color:var(--txt3);font-weight:500;font-size:12px}
+.mc-score{font-size:16px;font-weight:700;color:var(--cy);white-space:nowrap}
+.mc-right{text-align:right;flex-shrink:0;min-width:64px}
+.mc-date{font-size:10px;color:var(--txt3)}
+.mc-time{font-size:14px;font-weight:700;color:var(--cy)}
+.sbtn{background:none;border:none;cursor:pointer;opacity:.2;transition:opacity .15s;flex-shrink:0;padding:4px;display:flex;align-items:center;min-width:36px;min-height:36px;justify-content:center}
+.sbtn.on{opacity:1;filter:drop-shadow(0 0 5px var(--am))}
+
+/* badges */
+.bdg{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 7px;border-radius:3px;font-weight:700;line-height:1.5;white-space:nowrap;letter-spacing:.05em;text-transform:uppercase}
+.b-live{background:rgba(255,50,50,.15);color:#ff6868;border:0.5px solid rgba(255,50,50,.4)}
+.b-soon{background:rgba(255,179,0,.12);color:#ffb300;border:0.5px solid rgba(255,179,0,.3)}
+.b-fin{background:rgba(100,100,120,.15);color:var(--txt3);border:0.5px solid rgba(100,100,120,.3)}
+.b-epl{background:var(--pk-dim);color:var(--pk2);border:0.5px solid var(--bdr)}
+.b-fa{background:rgba(232,48,48,.12);color:#ff8888;border:0.5px solid rgba(232,48,48,.3)}
+.b-ucl{background:rgba(255,179,0,.12);color:var(--am);border:0.5px solid rgba(255,179,0,.3)}
+.b-conf{background:var(--gr-dim);color:var(--gr);border:0.5px solid rgba(0,255,153,.3)}
+.b-rum{background:var(--am-dim);color:var(--am);border:0.5px solid rgba(255,179,0,.3)}
+.b-hot{background:var(--pk-dim);color:var(--pk2);border:0.5px solid var(--bdr)}
+
+/* ── NEWS card ── */
+.news-card{background:var(--bg2);border:0.5px solid var(--bdr);border-radius:6px;padding:12px 13px;margin-bottom:9px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);cursor:pointer;transition:border-color .15s}
+.news-card:hover{border-color:rgba(255,45,120,.4)}
+.news-card.transfer{border-left:2px solid var(--pk)}
+.news-card.match{border-left:2px solid var(--cy)}
+.news-card.general{border-left:2px solid var(--txt3)}
+.news-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:7px}
+.news-source-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.news-source{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+.news-time{font-size:10px;color:var(--txt3)}
+.news-title{font-size:13px;font-weight:700;color:var(--txt);line-height:1.45;flex:1;min-width:0}
+.news-badges{display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;align-items:flex-start}
+.news-desc{font-size:11px;color:var(--txt2);line-height:1.55;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-link{font-size:10px;color:var(--cy);text-transform:uppercase;letter-spacing:.07em;margin-top:6px;display:inline-block}
+
+/* brief section */
+.brief-sec{background:var(--bg2);border:0.5px solid var(--bdr);border-radius:6px;overflow:hidden;margin-bottom:10px}
+.brief-hdr{padding:10px 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--bdr);background:linear-gradient(90deg,var(--pk-dim),transparent)}
+.bh-left{display:flex;align-items:center;gap:10px}
+.bh-title{font-size:13px;font-weight:700;color:var(--txt);text-transform:uppercase;letter-spacing:.4px}
+.bh-sub{font-size:10px;color:var(--txt3);margin-top:1px}
+.brief-body{padding:10px 13px}
+.bday-row{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:0.5px solid rgba(255,45,120,.08)}
+.bday-row:last-child{border-bottom:none;padding-bottom:0}
+.bday-av{width:38px;height:38px;border-radius:4px;background:var(--pk-dim);border:0.5px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--pk2);flex-shrink:0}
+.bday-name{font-size:13px;font-weight:700;color:var(--txt)}
+.bday-det{font-size:11px;color:var(--txt3);margin-top:1px;text-transform:uppercase;letter-spacing:.04em}
+.bday-age{font-size:18px;font-weight:700;color:var(--pk);flex-shrink:0;text-align:right;filter:drop-shadow(0 0 5px var(--pk-glow))}
+.bday-age small{display:block;font-size:10px;color:var(--txt3);text-align:right;font-weight:400}
+.trivia-item{padding:9px 0;border-bottom:0.5px solid rgba(0,229,255,.08)}
+.trivia-item:last-child{border-bottom:none;padding-bottom:0}
+.tri-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.tt-hist{background:rgba(48,96,232,.15);color:#88aaff;border:0.5px solid rgba(48,96,232,.3)}
+.tt-rec{background:var(--gr-dim);color:var(--gr);border:0.5px solid rgba(0,255,153,.25)}
+.tt-fact{background:var(--pk-dim);color:var(--pk2);border:0.5px solid var(--bdr)}
+.tri-txt{font-size:13px;color:var(--txt2);line-height:1.6}
+.sec-tts-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:3px;border:0.5px solid var(--txt3);background:transparent;color:var(--txt3);font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.07em;flex-shrink:0;min-height:36px}
+.sec-tts-btn.speaking{border-color:var(--cy);color:var(--cy);background:var(--cy-dim)}
+
+/* standings */
+.standings-table{width:100%;border-collapse:collapse;font-size:12px}
+.standings-table th{color:var(--txt3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:6px 4px;border-bottom:0.5px solid var(--bdr);text-align:center}
+.standings-table th:first-child{text-align:left;padding-left:0}
+.standings-table td{padding:8px 4px;border-bottom:0.5px solid rgba(255,45,120,.06);text-align:center;color:var(--txt2)}
+.standings-table td:first-child{text-align:left;padding-left:0;color:var(--txt);font-weight:500}
+.standings-table tr:last-child td{border-bottom:none}
+.pos-num{color:var(--txt3);font-size:11px;min-width:18px;display:inline-block}
+.pos-num.champions{color:var(--cy)}.pos-num.europa{color:var(--gr)}.pos-num.relegation{color:#ff6868}
+.pts{color:var(--cy);font-weight:700}
+
+/* weekly */
+.wday-block{margin-bottom:14px}
+.wday-lbl{font-size:11px;font-weight:700;color:var(--txt3);margin-bottom:6px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.1em}
+.wday-today-lbl{color:var(--cy)}
+.wrow{background:var(--bg2);border-radius:4px;padding:9px 11px;display:flex;align-items:center;gap:8px;margin-bottom:5px;border:0.5px solid var(--bdr)}
+.wrow-comp{font-size:10px;color:var(--txt3);flex-shrink:0;min-width:52px;text-transform:uppercase}
+.wrow-teams{font-size:13px;font-weight:700;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wrow-time{font-size:12px;color:var(--cy);flex-shrink:0;font-weight:700}
+
+/* setting */
+.set-block{background:var(--bg2);border:0.5px solid var(--bdr);border-radius:6px;padding:14px;margin-bottom:12px}
+.set-title{font-size:12px;font-weight:700;color:var(--cy);margin-bottom:12px;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:6px}
+.set-title::before{content:'';width:3px;height:14px;background:var(--cy);border-radius:1px}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid rgba(255,45,120,.08)}
+.srow:last-of-type{border-bottom:none}
+.srow-lbl{font-size:13px;color:var(--txt2)}
+.srow-lbl small{display:block;font-size:11px;color:var(--txt3);margin-top:2px}
+.sel-dark{font-size:13px;padding:6px 12px;border-radius:6px;border:0.5px solid var(--bdr);color:var(--cy);background:var(--bg3);cursor:pointer;min-height:36px}
+.tog{width:48px;height:28px;border-radius:4px;border:0.5px solid var(--txt3);cursor:pointer;position:relative;transition:all .2s;background:var(--bg3);flex-shrink:0}
+.tog::after{content:'';position:absolute;top:4px;left:4px;width:18px;height:18px;border-radius:2px;background:var(--txt3);transition:all .2s}
+.tog.on{background:var(--pk-dim);border-color:var(--pk)}
+.tog.on::after{left:24px;background:var(--pk)}
+.save-cyber{width:100%;margin-top:14px;padding:13px;border-radius:6px;background:var(--pk-dim);border:1px solid var(--pk);font-size:14px;font-weight:700;color:var(--pk);cursor:pointer;text-transform:uppercase;letter-spacing:.12em;min-height:48px}
+.save-cyber:active{background:var(--pk);color:#fff}
+
+.loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;gap:10px}
+.loading-spinner{width:28px;height:28px;border:2px solid var(--bdr);border-top-color:var(--cy);border-radius:50%;animation:spin 0.8s linear infinite}
+.loading-text{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.1em}
+.error-box{background:rgba(255,50,50,.08);border:0.5px solid rgba(255,50,50,.3);border-radius:8px;padding:14px;margin-bottom:10px;font-size:12px;color:#ff8888;line-height:1.6}
+.last-updated{font-size:10px;color:var(--txt3);text-align:right;padding:2px 0 8px;text-transform:uppercase;letter-spacing:.06em}
+.empty{text-align:center;padding:24px 0;color:var(--txt3);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.toast-cyber{position:fixed;bottom:calc(80px + var(--safe-bottom));left:50%;transform:translateX(-50%);background:var(--bg2);border:0.5px solid var(--cy);border-radius:8px;padding:10px 18px;font-size:13px;color:var(--cy);text-align:center;opacity:0;transition:opacity .35s;letter-spacing:.06em;white-space:nowrap;z-index:100}
+
+/* bottom nav */
+.bnav{display:flex;border-top:1px solid rgba(255,45,120,.2);background:var(--bg);padding:8px 0 calc(8px + var(--safe-bottom));position:relative;flex-shrink:0}
+.bnav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--pk) 40%,var(--cy) 60%,transparent);opacity:.6}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 0;min-height:44px;justify-content:center}
+.bni-lb{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.bni.on .bni-lb{color:var(--pk)}
+.bni.on svg{filter:drop-shadow(0 0 6px var(--pk-glow))}
+.frow{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.frow::-webkit-scrollbar{display:none}
+.fp{flex-shrink:0;padding:6px 13px;border-radius:3px;border:0.5px solid var(--txt3);font-size:11px;font-weight:700;color:var(--txt3);background:transparent;cursor:pointer;white-space:nowrap;text-transform:uppercase;min-height:36px;display:flex;align-items:center}
+.fp.on{background:var(--pk-dim);border-color:var(--pk);color:var(--pk)}
+
+/* news source indicator */
+.src-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block;margin-right:2px}
+.src-bbc{background:#bb1919}.src-sky{background:#0072ce}.src-guardian{background:#005689}.src-athletic{background:#2e4057}.src-mirror{background:#d60000}.src-sun{background:#e8262c}.src-default{background:var(--txt3)}
+</style>
+
+<!-- SVG icon defs -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+  <symbol id="ic-morning" viewBox="0 0 20 20"><circle cx="10" cy="10" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="10" y1="2" x2="10" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="15.5" x2="10" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="10" x2="4.5" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="15.5" y1="10" x2="18" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4.1" y1="4.1" x2="5.9" y2="5.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14.1" y1="14.1" x2="15.9" y2="15.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14.1" y1="5.9" x2="15.9" y2="4.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4.1" y1="15.9" x2="5.9" y2="14.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="ic-transfer" viewBox="0 0 20 20"><path d="M3 7h11M14 7l-3-3M14 7l-3 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 13H6M6 13l3-3M6 13l3 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-news" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="7" x2="14" y2="7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="6" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="6" y1="13" x2="10" y2="13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
+  <symbol id="ic-star" viewBox="0 0 20 20"><polygon points="10,2 12.5,7.5 18.5,8.2 14,12.5 15.4,18.5 10,15.5 4.6,18.5 6,12.5 1.5,8.2 7.5,7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-star-fill" viewBox="0 0 20 20"><polygon points="10,2 12.5,7.5 18.5,8.2 14,12.5 15.4,18.5 10,15.5 4.6,18.5 6,12.5 1.5,8.2 7.5,7.5" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-week" viewBox="0 0 20 20"><rect x="2" y="2" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="2" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="11" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="ic-settings" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="ic-speaker" viewBox="0 0 20 20"><path d="M4 7.5h3l4-3.5v12l-4-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M13.5 7.5C15 8.5 15 11.5 13.5 12.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15.5 5.5C18 7 18 13 15.5 14.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="ic-stop" viewBox="0 0 20 20"><rect x="4" y="4" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="7" width="6" height="6" rx="0.5" fill="currentColor" opacity=".7"/></symbol>
+  <symbol id="ic-ball" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 2.5L10 6L7 8L5 6.5M10 2.5L10 6L13 8L15 6.5M7 8L7 12L10 13.5L13 12L13 8M7 12L4.5 13.5M13 12L15.5 13.5" fill="none" stroke="currentColor" stroke-width="1"/></symbol>
+  <symbol id="ic-cake" viewBox="0 0 20 20"><rect x="3" y="10" width="14" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 14C5 12 7 16 10 14C13 12 15 16 17 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="7" y1="10" x2="7" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="10" x2="13" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="6.5" r="1.2" fill="currentColor" opacity=".8"/><circle cx="13" cy="6.5" r="1.2" fill="currentColor" opacity=".8"/></symbol>
+  <symbol id="ic-bolt" viewBox="0 0 20 20"><path d="M12 2L6 11L10 11L8 18L14 9L10 9Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-fire" viewBox="0 0 20 20"><path d="M10 18C5 18 3 14 5 10C6 8 7 9 7 9C7 7 8 4 10 2C10 4 11 5 12 5C12 3 13 2 14 3C16 5 17 8 16 11C15 14 13 18 10 18Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 17C8 17 7.5 15 8.5 13C9 12 9.5 13 9.5 13C9.5 12 10 10.5 11 9.5C11 11 12 12 12 12C13 10 13.5 13 12 15C11.5 16 10.8 17 10 17Z" fill="currentColor" opacity=".5"/></symbol>
+  <symbol id="ic-trophy" viewBox="0 0 20 20"><path d="M7 2H13V9C13 12 10 14 10 14C10 14 7 12 7 9Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 3H4C4 3 3 7 6.5 9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M13 3H16C16 3 17 7 13.5 9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="10" y1="14" x2="10" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="18" x2="13" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="ic-shield" viewBox="0 0 20 20"><path d="M10 2L17 5V10C17 14.5 13.5 17.5 10 18.5C6.5 17.5 3 14.5 3 10V5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10L9 12L13 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-table" viewBox="0 0 20 20"><rect x="2" y="3" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="2" y1="8" x2="18" y2="8" stroke="currentColor" stroke-width="1.2"/><line x1="2" y1="13" x2="18" y2="13" stroke="currentColor" stroke-width="1.2"/><line x1="8" y1="8" x2="8" y2="17" stroke="currentColor" stroke-width="1.2"/></symbol>
+  <symbol id="ic-refresh" viewBox="0 0 20 20"><path d="M4 10a6 6 0 106-6H7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 6v4h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-live" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3" fill="currentColor"/><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".5"/><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1" opacity=".25"/></symbol>
+  <symbol id="ic-epl" viewBox="0 0 20 20"><polygon points="10,2 18,7.5 15,16.5 5,16.5 2,7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><polygon points="10,6 14,8.8 12.5,13 7.5,13 6,8.8" fill="currentColor" opacity=".25"/></symbol>
+  <symbol id="ic-link" viewBox="0 0 20 20"><path d="M8 12l-2 2a3 3 0 000 4.24 3 3 0 004.24 0l2-2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 8l2-2a3 3 0 000-4.24 3 3 0 00-4.24 0L7.76 3.76" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="13" x2="13" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+</defs>
+</svg>
+
+<div class="shell">
+  <div class="sbar">
+    <span id="clock">9:41</span>
+    <div class="sbar-r">
+      <svg width="18" height="14" viewBox="0 0 18 14"><rect x="0" y="9" width="3" height="5" rx="0.5" fill="#00e5ff"/><rect x="4" y="6" width="3" height="8" rx="0.5" fill="#00e5ff"/><rect x="8" y="3" width="3" height="11" rx="0.5" fill="#00e5ff"/><rect x="12" y="0" width="3" height="14" rx="0.5" fill="#00e5ff"/></svg>
+      <span style="color:#80f0ff">5G</span><span style="color:#00e5ff">100%</span>
+    </div>
+  </div>
+
+  <div class="hdr">
+    <div class="hdr-row">
+      <div class="logo">
+        <div class="logo-box"><svg width="22" height="22" viewBox="0 0 20 20" style="color:var(--pk)"><use href="#ic-ball"/></svg></div>
+        <div><div class="logo-name">My Football</div><div class="logo-sub">Live · Auto Update</div></div>
+      </div>
+      <div class="header-right">
+        <div class="date-chip" id="today-chip"></div>
+        <button class="refresh-btn" id="refresh-btn" onclick="refreshAll()">
+          <svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--pk)"><use href="#ic-refresh"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="neon-line"></div>
+
+  <div class="tts-bar">
+    <div class="tts-bar-top">
+      <span class="tts-label">読み上げ</span>
+      <button class="tts-all-btn" id="btn-all" onclick="speakAll()"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-speaker"/></svg> ALL</button>
+      <button class="tts-stop-btn" onclick="stopSpeech()"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-stop"/></svg> STOP</button>
+    </div>
+    <div class="tts-chips">
+      <button class="tts-chip" id="chip-matches" onclick="speakSection('matches')"><svg width="13" height="13" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-ball"/></svg> 試合</button>
+      <button class="tts-chip" id="chip-news" onclick="speakSection('news')"><svg width="13" height="13" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-fire"/></svg> NEWS</button>
+      <button class="tts-chip" id="chip-bday" onclick="speakSection('bday')"><svg width="13" height="13" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-cake"/></svg> Birthday</button>
+      <button class="tts-chip" id="chip-trivia" onclick="speakSection('trivia')"><svg width="13" height="13" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-bolt"/></svg> Trivia</button>
+    </div>
+    <div class="tts-status" id="tts-status"><span style="color:var(--txt3);font-size:11px;text-transform:uppercase;letter-spacing:.05em">Ready</span></div>
+  </div>
+
+  <div class="tabbar">
+    <button class="tb on" onclick="sw('morning',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-morning"/></svg> 今朝</button>
+    <button class="tb" onclick="sw('news',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-news"/></svg> NEWS</button>
+    <button class="tb" onclick="sw('transfer',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-transfer"/></svg> 移籍</button>
+    <button class="tb" onclick="sw('epl',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-epl"/></svg> プレミア</button>
+    <button class="tb" onclick="sw('fa',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-shield"/></svg> FA</button>
+    <button class="tb" onclick="sw('ucl',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-trophy"/></svg> UCL</button>
+    <button class="tb" onclick="sw('standings',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-table"/></svg> 順位表</button>
+    <button class="tb" onclick="sw('fav',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:var(--am)"><use href="#ic-star"/></svg> FAV</button>
+    <button class="tb" onclick="sw('week',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-week"/></svg> 週間</button>
+    <button class="tb" onclick="sw('setting',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-settings"/></svg> 設定</button>
+  </div>
+
+  <div id="main" class="body"></div>
+  <div id="toast" class="toast-cyber"></div>
+
+  <div class="bnav">
+    <div class="bni on" onclick="swBni('morning',0)"><svg width="24" height="24" viewBox="0 0 20 20" style="color:var(--pk)"><use href="#ic-morning"/></svg><span class="bni-lb">Brief</span></div>
+    <div class="bni" onclick="swBni('news',1)"><svg width="24" height="24" viewBox="0 0 20 20" style="color:var(--txt3)"><use href="#ic-news"/></svg><span class="bni-lb">News</span></div>
+    <div class="bni" onclick="swBni('epl',3)"><svg width="24" height="24" viewBox="0 0 20 20" style="color:var(--txt3)"><use href="#ic-ball"/></svg><span class="bni-lb">Match</span></div>
+    <div class="bni" onclick="swBni('standings',6)"><svg width="24" height="24" viewBox="0 0 20 20" style="color:var(--txt3)"><use href="#ic-table"/></svg><span class="bni-lb">Table</span></div>
+  </div>
+</div>
+
+<script>
+/* ── CONFIG ── */
+const FOOTBALL_API_TOKEN = '9e94dbfdff6248089ce4ebb50e6ba2d6';
+const FOOTBALL_BASE = 'https://api.football-data.org/v4';
+const FOOTBALL_HEADERS = {'X-Auth-Token': FOOTBALL_API_TOKEN};
+
+/* RSS feeds via rss2json (free, no CORS issues) */
+const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const RSS_FEEDS = [
+  {url:'https://www.skysports.com/rss/12040',    name:'Sky Sports',  cat:'transfer'},
+  {url:'https://talksport.com/football/transfers/feed/', name:'TalkSPORT', cat:'transfer'},
+  {url:'https://www.bbc.co.uk/sport/football/premier-league/rss.xml', name:'BBC Sport', cat:'match'},
+  {url:'https://www.theguardian.com/football/rss', name:'Guardian',  cat:'general'},
+];
+
+/* ── STATE ── */
+let cachedMatches  = {};
+let cachedStandings = null;
+let cachedNews     = [];   /* live RSS items */
+let lastMatchUpdate = null;
+let lastNewsUpdate  = null;
+let starred = new Set(JSON.parse(localStorage.getItem('starred')||'[]'));
+let activeTab = 'morning';
+let newsFilter = 'all';
+const togg = JSON.parse(localStorage.getItem('togg')||'{"matches":true,"bday":true,"trivia":true}');
+const now = new Date();
+
+/* ── STATIC DATA ── */
+const BIRTHDAYS = [
+  {initials:'DB',name:'デイヴィッド・ベッカム',born:1975,club:'元マンチェスター・U',month:5,day:2},
+  {initials:'AS',name:'アラン・シアラー',born:1970,club:'元ニューカッスル',month:8,day:13},
+  {initials:'FL',name:'フランク・ランパード',born:1978,club:'元チェルシー',month:6,day:20},
+  {initials:'SG',name:'スティーブン・ジェラード',born:1980,club:'元リバプール',month:5,day:30},
+  {initials:'TH',name:'ティエリ・アンリ',born:1977,club:'元アーセナル',month:8,day:17},
+  {initials:'PF',name:'フィル・フォーデン',born:2000,club:'マンチェスター・C',month:5,day:28},
+  {initials:'MR',name:'マーカス・ラッシュフォード',born:2002,club:'マンチェスター・U',month:10,day:31},
+  {initials:'MS',name:'モハメド・サラー',born:1992,club:'リバプール',month:6,day:15},
+  {initials:'EH',name:'アーリング・ハーランド',born:2000,club:'マンチェスター・C',month:7,day:21},
+  {initials:'JG',name:'ジャック・グリーリッシュ',born:1995,club:'マンチェスター・C',month:9,day:10},
+];
+const TRIVIA = [
+  {tag:'history',label:'History',text:'1888年、ウィリアム・マクレガーがフットボールリーグを創設。世界初のプロリーグは全12クラブでスタートした。'},
+  {tag:'record',label:'Record',text:'プレミアリーグ最速ゴール記録はシェーン・ロングの7秒69。2019年のバーンリー戦、キックオフ直後のゴールだった。'},
+  {tag:'fact',label:'Fact',text:'カラバオカップは1960年創設のリーグカップ。エナジードリンクブランドがスポンサーとなりこの名前になった。'},
+  {tag:'history',label:'History',text:'1966年W杯決勝でイングランドがドイツを4-2で破り唯一の優勝。ジェフ・ハーストはハットトリックを達成した唯一の選手。'},
+  {tag:'record',label:'Record',text:'アラン・シアラーはプレミアリーグ通算260ゴールの記録保持者。ニューカッスルへの愛から欧州移籍を断り続けた。'},
+  {tag:'fact',label:'Fact',text:'アーセナルは1939年から2年間を除き、トップリーグに在籍し続けている。全クラブ中最長の連続トップリーグ在籍記録だ。'},
+];
+
+/* ── CLOCK ── */
+document.getElementById('today-chip').textContent = `${now.getMonth()+1}/${now.getDate()}`;
+function updateClock(){const n=new Date();document.getElementById('clock').textContent=n.getHours()+':'+(n.getMinutes()<10?'0':'')+n.getMinutes();}
+updateClock(); setInterval(updateClock,30000);
+
+/* ── RSS NEWS FETCH ── */
+function stripHtml(str=''){return str.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").trim();}
+
+function relTime(dateStr){
+  const d=new Date(dateStr);const diff=(Date.now()-d.getTime())/1000;
+  if(diff<3600)return Math.floor(diff/60)+'分前';
+  if(diff<86400)return Math.floor(diff/3600)+'時間前';
+  return Math.floor(diff/86400)+'日前';
+}
+
+function classifyNews(title=''){
+  const t=title.toLowerCase();
+  const transferKw=['transfer','signing','deal','loan','bid','fee','sign','move','swap','rumour','rumor','want','target','interest','linked','agree','contract','release','free agent'];
+  const matchKw=['match','preview','result','goal','win','draw','loss','defeat','beat','score','fixture','vs','v '];
+  if(transferKw.some(k=>t.includes(k)))return'transfer';
+  if(matchKw.some(k=>t.includes(k)))return'match';
+  return'general';
+}
+
+function sourceDotClass(src=''){
+  const s=src.toLowerCase();
+  if(s.includes('bbc'))return'src-bbc';
+  if(s.includes('sky'))return'src-sky';
+  if(s.includes('guardian'))return'src-guardian';
+  if(s.includes('athletic'))return'src-athletic';
+  if(s.includes('mirror'))return'src-mirror';
+  if(s.includes('sun'))return'src-sun';
+  return'src-default';
+}
+
+async function fetchRSSFeed(feed){
+  try{
+    const url=RSS2JSON+encodeURIComponent(feed.url)+'&count=8';
+    const res=await fetch(url);
+    if(!res.ok)throw new Error('rss2json error');
+    const data=await res.json();
+    if(data.status!=='ok')throw new Error(data.message||'bad status');
+    return (data.items||[]).map(item=>({
+      title: stripHtml(item.title||''),
+      desc:  stripHtml(item.description||item.content||'').slice(0,160),
+      link:  item.link||'',
+      pubDate: item.pubDate||'',
+      source: feed.name,
+      cat:   classifyNews(item.title||''),
+      sourceCat: feed.cat,
+    }));
+  }catch(e){
+    console.warn('RSS fetch failed:',feed.name,e);
+    return[];
+  }
+}
+
+async function refreshNews(){
+  const results=await Promise.all(RSS_FEEDS.map(fetchRSSFeed));
+  const all=[].concat(...results);
+  /* deduplicate by title similarity & sort by date */
+  const seen=new Set();
+  cachedNews=all.filter(n=>{
+    const key=n.title.slice(0,40).toLowerCase();
+    if(seen.has(key))return false;
+    seen.add(key);return true;
+  }).sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
+  lastNewsUpdate=new Date();
+  localStorage.setItem('newsCache',JSON.stringify({items:cachedNews,ts:lastNewsUpdate.toISOString()}));
+}
+
+/* ── FOOTBALL API ── */
+async function fetchMatches(compId){
+  try{
+    const today=new Date();
+    const from=today.toISOString().split('T')[0];
+    const toDate=new Date(today);toDate.setDate(today.getDate()+14);
+    const to=toDate.toISOString().split('T')[0];
+    const res=await fetch(`${FOOTBALL_BASE}/competitions/${compId}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED,LIVE,IN_PLAY,PAUSED,FINISHED`,{headers:FOOTBALL_HEADERS});
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    return(await res.json()).matches||[];
+  }catch(e){console.error('fetchMatches:',e);return null;}
+}
+async function fetchStandings(){
+  try{
+    const res=await fetch(`${FOOTBALL_BASE}/competitions/PL/standings`,{headers:FOOTBALL_HEADERS});
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    return(await res.json()).standings?.[0]?.table||[];
+  }catch(e){console.error('fetchStandings:',e);return null;}
+}
+
+async function refreshAll(){
+  document.getElementById('refresh-btn').classList.add('spinning');
+  toast('データを更新中...');
+  try{
+    const [eplM,faM,uclM,eplS]=await Promise.all([
+      fetchMatches('PL'),fetchMatches('FAC'),fetchMatches('CL'),fetchStandings()
+    ]);
+    if(eplM)cachedMatches.epl=eplM;
+    if(faM) cachedMatches.fa=faM;
+    if(uclM)cachedMatches.ucl=uclM;
+    if(eplS)cachedStandings=eplS;
+    lastMatchUpdate=new Date();
+    localStorage.setItem('matchCache',JSON.stringify({matches:cachedMatches,standings:cachedStandings,ts:lastMatchUpdate.toISOString()}));
+    await refreshNews();
+    toast('✓ 全データを更新しました');
+  }catch(e){toast('更新に失敗しました');}
+  document.getElementById('refresh-btn').classList.remove('spinning');
+  render();
+}
+
+function loadCaches(){
+  try{
+    const mc=localStorage.getItem('matchCache');
+    if(mc){const c=JSON.parse(mc);const age=(Date.now()-new Date(c.ts))/60000;if(age<60){cachedMatches=c.matches||{};cachedStandings=c.standings||null;lastMatchUpdate=new Date(c.ts);}}
+    const nc=localStorage.getItem('newsCache');
+    if(nc){const c=JSON.parse(nc);const age=(Date.now()-new Date(c.ts))/60000;if(age<30){cachedNews=c.items||[];lastNewsUpdate=new Date(c.ts);}}
+  }catch(e){}
+}
+
+/* ── MATCH HELPERS ── */
+function parseMatch(m,cat){
+  const jst=new Date(new Date(m.utcDate).getTime()+9*3600000);
+  const dateStr=`${jst.getMonth()+1}/${jst.getDate()}`;
+  const timeStr=`${String(jst.getHours()).padStart(2,'0')}:${String(jst.getMinutes()).padStart(2,'0')}`;
+  const isToday=jst.toDateString()===new Date(Date.now()+9*3600000).toDateString();
+  const statusMap={LIVE:'live',IN_PLAY:'live',PAUSED:'live',SCHEDULED:'upcoming',TIMED:'upcoming',FINISHED:'finished'};
+  const status=statusMap[m.status]||'upcoming';
+  let score=null;
+  if(status==='live'||status==='finished'){const h=m.score?.fullTime?.home??'?';const a=m.score?.fullTime?.away??'?';score=`${h} - ${a}`;}
+  return{id:m.id,cat,comp:m.competition?.name||'',home:m.homeTeam?.shortName||m.homeTeam?.name||'?',away:m.awayTeam?.shortName||m.awayTeam?.name||'?',date:isToday?'今日':dateStr,time:timeStr,status,score,wday:jst.getDay(),isToday};
+}
+function getAllMatches(){
+  const r=[];
+  for(const[cat,ms]of Object.entries(cachedMatches))if(Array.isArray(ms))ms.forEach(m=>r.push(parseMatch(m,cat)));
+  return r.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+}
+function getTodayMatches(){return getAllMatches().filter(m=>m.isToday);}
+
+/* ── RENDER HELPERS ── */
+function accentCls(m){return{epl:'mc epl-a',fa:'mc fa-a',ucl:'mc ucl-a'}[m.cat]||'mc';}
+function compBdg(m){
+  const mp={epl:['b-epl','EPL','ic-epl'],fa:['b-fa','FA','ic-shield'],ucl:['b-ucl','UCL','ic-trophy']};
+  const d=mp[m.cat];if(!d)return'';
+  return`<span class="bdg ${d[0]}"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#${d[2]}"/></svg>${d[1]}</span>`;
+}
+function stsBdg(s){
+  if(s==='live')return`<span class="bdg b-live"><svg width="10" height="10" viewBox="0 0 20 20" style="color:#ff4545;animation:blink 1s infinite"><use href="#ic-live"/></svg>LIVE</span>`;
+  if(s==='soon')return`<span class="bdg b-soon">SOON</span>`;
+  if(s==='finished')return`<span class="bdg b-fin">FT</span>`;
+  return'';
+}
+function mCard(m){
+  const s=starred.has(m.id);
+  const si=s?`<svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--am)"><use href="#ic-star-fill"/></svg>`:`<svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--txt3)"><use href="#ic-star"/></svg>`;
+  const val=m.score?`<div class="mc-score">${m.score}</div>`:`<div class="mc-time">${m.time}</div>`;
+  return`<div class="${accentCls(m)}">
+    <button class="sbtn ${s?'on':''}" onclick="toggleStar(${m.id})">${si}</button>
+    <div class="mc-body"><div class="mc-comp">${m.comp} ${compBdg(m)} ${stsBdg(m.status)}</div><div class="mc-teams">${m.home} <em>vs</em> ${m.away}</div></div>
+    <div class="mc-right"><div class="mc-date">${m.date}</div>${val}</div>
+  </div>`;
+}
+
+/* NEWS card */
+function newsTypeBadge(cat){
+  if(cat==='transfer')return`<span class="bdg b-hot"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-transfer"/></svg>移籍</span>`;
+  if(cat==='match')return`<span class="bdg b-epl"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-ball"/></svg>試合</span>`;
+  return`<span class="bdg" style="background:rgba(100,100,120,.15);color:var(--txt3);border:0.5px solid rgba(100,100,120,.3)">NEWS</span>`;
+}
+function newsCard(n){
+  const dotCls=sourceDotClass(n.source);
+  const cardCls=`news-card ${n.cat}`;
+  return`<div class="${cardCls}" onclick="window.open('${n.link}','_blank')">
+    <div class="news-source-row">
+      <span class="src-dot ${dotCls}"></span>
+      <span class="news-source">${n.source}</span>
+      <span class="news-time">${n.pubDate?relTime(n.pubDate):''}</span>
+      <span style="margin-left:auto">${newsTypeBadge(n.cat)}</span>
+    </div>
+    <div class="news-title">${n.title}</div>
+    ${n.desc?`<div class="news-desc">${n.desc}</div>`:''}
+    <div class="news-link">続きを読む <svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor;vertical-align:middle"><use href="#ic-link"/></svg></div>
+  </div>`;
+}
+
+function secBtn(id,lbl){return`<button class="sec-tts-btn" id="chip-${id}" onclick="speakSection('${id}')"><svg width="12" height="12" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-speaker"/></svg> ${lbl}</button>`;}
+function updLine(ts){if(!ts)return'';const t=ts;return`<div class="last-updated">Updated ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')} JST</div>`;}
+function noData(){return`<div class="error-box">データ取得中です。🔄ボタンをタップして更新してください。</div>`;}
+
+/* ── PAGES ── */
+function renderMorning(){
+  const todayM=getTodayMatches();
+  const hotNews=cachedNews.filter(n=>n.cat==='transfer').slice(0,3);
+  const bdays=getTodayBirthdays();
+  const ia=now.getDate()%TRIVIA.length,ib=(now.getDate()+1)%TRIVIA.length;
+  let h=updLine(lastMatchUpdate||lastNewsUpdate);
+
+  /* Today's matches */
+  h+=`<div class="brief-sec"><div class="brief-hdr"><div class="bh-left"><svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--cy)"><use href="#ic-ball"/></svg><div><div class="bh-title">Today's Matches</div><div class="bh-sub">Kickoff · Japan Time</div></div></div>${secBtn('matches','試合時間')}</div><div class="brief-body">`;
+  if(!Object.keys(cachedMatches).length)h+=noData();
+  else if(!todayM.length)h+=`<div class="empty">本日の試合はありません</div>`;
+  else h+=todayM.map(mCard).join('');
+  h+=`</div></div>`;
+
+  /* Live RSS News */
+  h+=`<div class="brief-sec"><div class="brief-hdr"><div class="bh-left"><svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--pk)"><use href="#ic-fire"/></svg><div><div class="bh-title">Transfer Hot News</div><div class="bh-sub">${lastNewsUpdate?'Live · '+relTime(lastNewsUpdate.toISOString()):'RSS自動取得'}</div></div></div>${secBtn('news','NEWS')}</div><div class="brief-body" style="padding:10px 13px">`;
+  if(!cachedNews.length)h+=noData();
+  else h+=hotNews.map(newsCard).join('');
+  h+=`</div></div>`;
+
+  /* Birthday */
+  h+=`<div class="brief-sec"><div class="brief-hdr"><div class="bh-left"><svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--pk2)"><use href="#ic-cake"/></svg><div><div class="bh-title">Birthday Players</div><div class="bh-sub">${now.getMonth()+1}/${now.getDate()} Born</div></div></div>${secBtn('bday','Birthday')}</div><div class="brief-body">`;
+  if(!bdays.length)h+=`<div class="empty">本日誕生日の選手はいません</div>`;
+  else bdays.forEach(p=>{const age=now.getFullYear()-p.born;h+=`<div class="bday-row"><div class="bday-av">${p.initials}</div><div style="flex:1;min-width:0"><div class="bday-name">${p.name}</div><div class="bday-det">${p.club}</div></div><div class="bday-age">${age}<small>yrs</small></div></div>`;});
+  h+=`</div></div>`;
+
+  /* Trivia */
+  h+=`<div class="brief-sec"><div class="brief-hdr"><div class="bh-left"><svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--am)"><use href="#ic-bolt"/></svg><div><div class="bh-title">Football Trivia</div><div class="bh-sub">England · History · Records</div></div></div>${secBtn('trivia','Trivia')}</div><div class="brief-body">`;
+  [TRIVIA[ia],TRIVIA[ib]].forEach(tr=>{const cls=tr.tag==='history'?'tt-hist':tr.tag==='record'?'tt-rec':'tt-fact';h+=`<div class="trivia-item"><span class="tri-tag ${cls}"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#${tr.tag==='history'?'ic-table':tr.tag==='record'?'ic-trophy':'ic-bolt'}"/></svg>${tr.label}</span><div class="tri-txt">${tr.text}</div></div>`;});
+  h+=`</div></div>`;
+  return h;
+}
+
+function renderNews(){
+  const filters=[{id:'all',l:'All'},{id:'transfer',l:'移籍'},{id:'match',l:'試合'},{id:'general',l:'General'}];
+  let list=newsFilter==='all'?cachedNews:cachedNews.filter(n=>n.cat===newsFilter);
+  const fH=filters.map(f=>`<button class="fp ${newsFilter===f.id?'on':''}" onclick="setNF('${f.id}')">${f.l}</button>`).join('');
+  let h=updLine(lastNewsUpdate)+`<div class="frow">${fH}</div>`;
+  if(!cachedNews.length)h+=noData();
+  else if(!list.length)h+=`<div class="empty">No news</div>`;
+  else h+=list.slice(0,20).map(newsCard).join('');
+  return h;
+}
+function setNF(id){newsFilter=id;document.getElementById('main').innerHTML=renderNews();}
+
+function renderCompMatches(cat){
+  const all=getAllMatches().filter(m=>m.cat===cat);
+  if(!all.length&&!Object.keys(cachedMatches).length)return noData()+updLine(lastMatchUpdate);
+  if(!all.length)return`<div class="empty">試合データなし</div>`+updLine(lastMatchUpdate);
+  const live=all.filter(m=>m.status==='live'),rest=all.filter(m=>m.status!=='live');
+  let h=updLine(lastMatchUpdate);
+  if(live.length)h+=`<div class="slbl">Live Now</div>`+live.map(mCard).join('');
+  if(rest.length){if(live.length)h+=`<div class="slbl" style="margin-top:8px">Upcoming / Results</div>`;h+=rest.map(mCard).join('');}
+  return h;
+}
+
+function renderFav(){
+  const all=getAllMatches().filter(m=>starred.has(m.id));
+  if(!all.length)return`<div class="empty">お気に入りなし<br><br>各試合の ☆ をタップして追加</div>`;
+  return updLine(lastMatchUpdate)+all.map(mCard).join('');
+}
+
+function renderStandings(){
+  if(!cachedStandings)return noData()+updLine(lastMatchUpdate);
+  let h=updLine(lastMatchUpdate);
+  h+=`<table class="standings-table"><thead><tr><th style="width:28px"></th><th style="text-align:left">クラブ</th><th>試</th><th>勝</th><th>分</th><th>負</th><th>得失</th><th style="color:var(--cy)">勝点</th></tr></thead><tbody>`;
+  cachedStandings.forEach(row=>{
+    const pos=row.position;
+    let pc='pos-num';if(pos<=4)pc+=' champions';else if(pos===5)pc+=' europa';else if(pos>=18)pc+=' relegation';
+    const gd=row.goalDifference>0?'+'+row.goalDifference:row.goalDifference;
+    h+=`<tr><td><span class="${pc}">${pos}</span></td><td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${row.team.shortName||row.team.name}</td><td>${row.playedGames}</td><td>${row.won}</td><td>${row.draw}</td><td>${row.lost}</td><td>${gd}</td><td class="pts">${row.points}</td></tr>`;
+  });
+  h+=`</tbody></table><div style="margin-top:10px;font-size:10px;display:flex;gap:12px"><span><span style="color:var(--cy);font-weight:700">■</span> CL</span><span><span style="color:var(--gr);font-weight:700">■</span> EL</span><span><span style="color:#ff6868;font-weight:700">■</span> 降格</span></div>`;
+  return h;
+}
+
+function renderWeekly(){
+  const all=getAllMatches();const days=['日','月','火','水','木','金','土'];
+  const todayWday=new Date(Date.now()+9*3600000).getDay();
+  const groups={};all.forEach(m=>{if(!groups[m.wday])groups[m.wday]=[];groups[m.wday].push(m);});
+  let h=updLine(lastMatchUpdate);let hasAny=false;
+  for(let i=0;i<7;i++){const d=(todayWday+i)%7;const ms=groups[d];if(!ms||!ms.length)continue;hasAny=true;
+    const isToday=d===todayWday;const dot=isToday?`<svg width="8" height="8" viewBox="0 0 8 8" style="color:var(--cy)"><circle cx="4" cy="4" r="3.5" fill="currentColor"/></svg>`:'';
+    h+=`<div class="wday-block"><div class="wday-lbl ${isToday?'wday-today-lbl':''}">${dot} ${days[d]}曜日${isToday?' · TODAY':''}</div>`;
+    ms.forEach(m=>{const comp={epl:'EPL',fa:'FA',ucl:'UCL'}[m.cat]||m.cat;h+=`<div class="wrow"><div class="wrow-comp">${comp}</div><div class="wrow-teams">${m.home} vs ${m.away}</div><div class="wrow-time">${m.score||m.time}</div></div>`;});
+    h+=`</div>`;
+  }
+  if(!hasAny)h+=noData();
+  return h;
+}
+
+function togHTML(key,label,sub){return`<div class="srow"><div class="srow-lbl">${label}<small>${sub}</small></div><button class="tog ${togg[key]?'on':''}" onclick="togSet('${key}')"></button></div>`;}
+function togSet(k){togg[k]=!togg[k];localStorage.setItem('togg',JSON.stringify(togg));render();}
+function renderSetting(){
+  return`<div class="set-block">
+    <div class="set-title">Morning Brief</div>
+    <div class="srow"><div class="srow-lbl">通知時刻<small>9:00 — 11:00</small></div><select class="sel-dark" id="msel"><option>9:00</option><option selected>9:30</option><option>10:00</option><option>10:30</option><option>11:00</option></select></div>
+    ${togHTML('matches',"Today's Matches",'試合を表示')}
+    ${togHTML('bday','Birthday Players','誕生日の選手')}
+    ${togHTML('trivia','Football Trivia','歴史・記録・雑学')}
+    <button class="save-cyber" onclick="toast('Briefing saved ✓')">Save Config</button>
+  </div>
+  <div class="set-block">
+    <div class="set-title">Data Sources</div>
+    <div class="srow"><div class="srow-lbl">試合データ<small>football-data.org Free Plan</small></div><span style="font-size:11px;color:var(--gr);font-weight:700">LIVE</span></div>
+    <div class="srow"><div class="srow-lbl">移籍NEWS<small>Sky Sports / TalkSPORT / BBC / Guardian RSS</small></div><span style="font-size:11px;color:var(--cy);font-weight:700">RSS AUTO</span></div>
+    <div class="srow"><div class="srow-lbl">最終更新<small>試合 / ニュース</small></div><span style="font-size:11px;color:var(--txt3)">${lastMatchUpdate?lastMatchUpdate.toLocaleTimeString('ja-JP'):'—'} / ${lastNewsUpdate?lastNewsUpdate.toLocaleTimeString('ja-JP'):'—'}</span></div>
+    <button class="save-cyber" onclick="refreshAll()">今すぐ全データ更新</button>
+  </div>
+  <div class="set-block">
+    <div class="set-title">Weekly Digest · Sunday</div>
+    <div class="srow"><div class="srow-lbl">通知時刻<small>翌週の全試合を通知</small></div><select class="sel-dark" id="wsel"><option>19:00</option><option>20:00</option><option selected>21:00</option><option>22:00</option></select></div>
+    <button class="save-cyber" onclick="toast('Weekly digest saved ✓')">Save Config</button>
+  </div>`;
+}
+
+/* ── TTS ── */
+function setTTSStatus(msg,wave=false){
+  document.getElementById('tts-status').innerHTML=wave
+    ?`<div class="tts-wave"><span></span><span></span><span></span><span></span><span></span></div><span style="color:var(--cy);font-size:11px;text-transform:uppercase;letter-spacing:.05em">${msg}</span>`
+    :`<span style="color:var(--txt3);font-size:11px;text-transform:uppercase;letter-spacing:.05em">${msg}</span>`;
+}
+function clearChips(){document.querySelectorAll('.tts-chip,.tts-all-btn').forEach(b=>b.classList.remove('speaking'));}
+function stopSpeech(){window.speechSynthesis.cancel();clearChips();setTTSStatus('Ready');}
+function speak(text,sid,label){
+  if(!window.speechSynthesis){toast('TTS非対応');return;}
+  window.speechSynthesis.cancel();clearChips();
+  const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=0.95;
+  const v=window.speechSynthesis.getVoices().find(v=>v.lang.startsWith('ja'));if(v)u.voice=v;
+  u.onstart=()=>{setTTSStatus(label,true);const c=sid==='all'?document.getElementById('btn-all'):document.getElementById('chip-'+sid);if(c)c.classList.add('speaking');};
+  u.onend=()=>{clearChips();setTTSStatus('完了 · Done');};
+  u.onerror=()=>{clearChips();setTTSStatus('Error');};
+  window.speechSynthesis.speak(u);
+}
+
+function buildMatchesText(){const m=getTodayMatches();if(!m.length)return'本日の試合はありません。';let t='本日の試合です。';m.forEach(x=>t+=`${x.status==='live'?'現在ライブ中、':''}${x.home}対${x.away}、日本時間${x.time}。${x.score?'スコア'+x.score+'。':''}`);return t;}
+function buildNewsText(){
+  const top=cachedNews.filter(n=>n.cat==='transfer').slice(0,3);
+  if(!top.length)return'現在移籍ニュースはありません。';
+  let t='最新移籍ニュースです。';
+  top.forEach(n=>t+=`${n.source}より。${n.title}。`);
+  return t;
+}
+function buildBdayText(){const bd=getTodayBirthdays();if(!bd.length)return`本日誕生日の選手はいません。`;let t='本日誕生日の選手です。';bd.forEach(p=>t+=`${p.name}、${p.club}、${now.getFullYear()-p.born}歳。`);return t;}
+function buildTriviaText(){const a=now.getDate()%TRIVIA.length,b=(now.getDate()+1)%TRIVIA.length;return'今日のサッカー小話です。'+TRIVIA[a].text+' '+TRIVIA[b].text;}
+function speakSection(s){const m={matches:'試合時間を読み上げ中',news:'NEWSを読み上げ中',bday:'Birthdayを読み上げ中',trivia:'Triviaを読み上げ中'};const b={matches:buildMatchesText,news:buildNewsText,bday:buildBdayText,trivia:buildTriviaText};speak(b[s](),s,m[s]);}
+function speakAll(){speak([buildMatchesText(),buildNewsText(),buildBdayText(),buildTriviaText()].join(' '),'all','ALL を読み上げ中');}
+if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+
+function getTodayBirthdays(){const m=now.getMonth()+1,d=now.getDate();return BIRTHDAYS.filter(p=>p.month===m&&p.day===d);}
+
+/* ── UI ── */
+function sw(t,el){activeTab=t;newsFilter='all';document.querySelectorAll('.tb').forEach(x=>x.classList.remove('on'));el.classList.add('on');render();}
+function swBni(t,tabIdx){
+  document.querySelectorAll('.bni').forEach(x=>x.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+  activeTab=t;newsFilter='all';
+  const tabs=document.querySelectorAll('.tb');
+  document.querySelectorAll('.tb').forEach(x=>x.classList.remove('on'));
+  if(tabs[tabIdx])tabs[tabIdx].classList.add('on');
+  render();
+}
+function toggleStar(id){
+  if(starred.has(id)){starred.delete(id);toast('Removed from FAV');}else{starred.add(id);toast('⭐ Added to FAV');}
+  localStorage.setItem('starred',JSON.stringify([...starred]));render();
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2400);}
+
+function render(){
+  const el=document.getElementById('main');
+  if(activeTab==='morning')        el.innerHTML=renderMorning();
+  else if(activeTab==='news')      el.innerHTML=renderNews();
+  else if(activeTab==='transfer')  el.innerHTML=renderNews(); /* alias */
+  else if(activeTab==='epl')       el.innerHTML=renderCompMatches('epl');
+  else if(activeTab==='fa')        el.innerHTML=renderCompMatches('fa');
+  else if(activeTab==='ucl')       el.innerHTML=renderCompMatches('ucl');
+  else if(activeTab==='standings') el.innerHTML=renderStandings();
+  else if(activeTab==='fav')       el.innerHTML=renderFav();
+  else if(activeTab==='week')      el.innerHTML=renderWeekly();
+  else if(activeTab==='setting')   el.innerHTML=renderSetting();
+}
+
+/* ── INIT ── */
+(async()=>{
+  loadCaches();
+  render();
+  const needMatchRefresh=!lastMatchUpdate||(Date.now()-lastMatchUpdate)/60000>60;
+  const needNewsRefresh=!lastNewsUpdate||(Date.now()-lastNewsUpdate)/60000>30;
+  if(needMatchRefresh||needNewsRefresh){await refreshAll();}else{render();}
+})();
+
+/* Auto refresh: matches every 5min, news every 15min */
+setInterval(async()=>{if(!document.hidden){const[eplM,faM,uclM,eplS]=await Promise.all([fetchMatches('PL'),fetchMatches('FAC'),fetchMatches('CL'),fetchStandings()]);if(eplM)cachedMatches.epl=eplM;if(faM)cachedMatches.fa=faM;if(uclM)cachedMatches.ucl=uclM;if(eplS)cachedStandings=eplS;lastMatchUpdate=new Date();render();}},5*60*1000);
+setInterval(async()=>{if(!document.hidden){await refreshNews();render();}},15*60*1000);
+</script>
+</body>
+</html>
