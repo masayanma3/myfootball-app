@@ -75,6 +75,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .mc.epl-a{border-left:2px solid var(--pk)}
 .mc.fa-a{border-left:2px solid #e83030}
 .mc.ucl-a{border-left:2px solid var(--am)}
+.mc.wc-a{border-left:2px solid var(--gr)}
+.mc.pd-a{border-left:2px solid #c8102e}   /* ラ・リーガ — スペイン赤 */
+.mc.sa-a{border-left:2px solid #009246}   /* セリエA — イタリア緑 */
+.mc.bl1-a{border-left:2px solid #d00027}  /* ブンデス — ドイツ赤 */
+.mc.fl1-a{border-left:2px solid #003189}  /* リーグ1 — フランス青 */
 .mc-body{flex:1;min-width:0}
 .mc-comp{font-size:10px;color:var(--txt3);margin-bottom:3px;display:flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.04em;flex-wrap:wrap}
 .mc-teams{font-size:14px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -97,6 +102,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .b-conf{background:var(--gr-dim);color:var(--gr);border:0.5px solid rgba(0,255,153,.3)}
 .b-rum{background:var(--am-dim);color:var(--am);border:0.5px solid rgba(255,179,0,.3)}
 .b-hot{background:var(--pk-dim);color:var(--pk2);border:0.5px solid var(--bdr)}
+.b-wc{background:var(--gr-dim);color:var(--gr);border:0.5px solid rgba(0,255,153,.25)}
+.b-pd{background:rgba(200,16,46,.12);color:#e84060;border:0.5px solid rgba(200,16,46,.3)}
+.b-sa{background:rgba(0,146,70,.12);color:#20c060;border:0.5px solid rgba(0,146,70,.3)}
+.b-bl1{background:rgba(208,0,39,.12);color:#e84060;border:0.5px solid rgba(208,0,39,.3)}
+.b-fl1{background:rgba(0,49,137,.15);color:#6699ee;border:0.5px solid rgba(0,49,137,.3)}
 
 /* ── NEWS card ── */
 .news-card{background:var(--bg2);border:0.5px solid var(--bdr);border-radius:6px;padding:12px 13px;margin-bottom:9px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);cursor:pointer;transition:border-color .15s}
@@ -271,6 +281,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
     <button class="tb" onclick="sw('epl',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-epl"/></svg> プレミア</button>
     <button class="tb" onclick="sw('fa',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-shield"/></svg> FA</button>
     <button class="tb" onclick="sw('ucl',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-trophy"/></svg> UCL</button>
+    <button class="tb" onclick="sw('pd',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-ball"/></svg> LaLiga</button>
+    <button class="tb" onclick="sw('sa',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-ball"/></svg> SerieA</button>
+    <button class="tb" onclick="sw('bl1',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-ball"/></svg> Bundesliga</button>
+    <button class="tb" onclick="sw('fl1',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-ball"/></svg> Ligue1</button>
+    <button class="tb" onclick="sw('wc',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-trophy"/></svg> W杯</button>
     <button class="tb" onclick="sw('standings',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-table"/></svg> 順位表</button>
     <button class="tb" onclick="sw('fav',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:var(--am)"><use href="#ic-star"/></svg> FAV</button>
     <button class="tb" onclick="sw('week',this)"><svg width="14" height="14" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-week"/></svg> 週間</button>
@@ -339,6 +354,8 @@ let starred = new Set(JSON.parse(localStorage.getItem('starred')||'[]'));
 let activeTab = 'morning';
 let newsFilter = 'all';
 const togg = JSON.parse(localStorage.getItem('togg')||'{"matches":true,"bday":true,"trivia":true}');
+/* リーグ表示設定 — 設定画面でON/OFF可能 */
+const enabledLeagues = new Set(JSON.parse(localStorage.getItem('enabledLeagues')||'["epl","fa","ucl","wc","pd","sa","bl1","fl1"]'));
 const now = new Date();
 
 /* ── STATIC DATA ── */
@@ -625,13 +642,26 @@ async function refreshAll(){
   document.getElementById('refresh-btn').classList.add('spinning');
   toast('データを更新中...');
   try{
-    const [eplM,faM,uclM,eplS]=await Promise.all([
-      fetchMatches('PL'),fetchMatches('FAC'),fetchMatches('CL'),fetchStandings()
+    const [eplM,faM,uclM,wcM,pdM,saM,bl1M,fl1M,eplS]=await Promise.all([
+      fetchMatches('PL'),   /* プレミアリーグ */
+      fetchMatches('FAC'),  /* FAカップ */
+      fetchMatches('CL'),   /* チャンピオンズリーグ */
+      fetchMatches('WC'),   /* ワールドカップ */
+      fetchMatches('PD'),   /* ラ・リーガ */
+      fetchMatches('SA'),   /* セリエA */
+      fetchMatches('BL1'),  /* ブンデスリーガ */
+      fetchMatches('FL1'),  /* リーグ1 */
+      fetchStandings()
     ]);
-    if(eplM)cachedMatches.epl=eplM;
-    if(faM) cachedMatches.fa=faM;
-    if(uclM)cachedMatches.ucl=uclM;
-    if(eplS)cachedStandings=eplS;
+    if(eplM) cachedMatches.epl  = eplM;
+    if(faM)  cachedMatches.fa   = faM;
+    if(uclM) cachedMatches.ucl  = uclM;
+    if(wcM)  cachedMatches.wc   = wcM;
+    if(pdM)  cachedMatches.pd   = pdM;
+    if(saM)  cachedMatches.sa   = saM;
+    if(bl1M) cachedMatches.bl1  = bl1M;
+    if(fl1M) cachedMatches.fl1  = fl1M;
+    if(eplS) cachedStandings    = eplS;
     lastMatchUpdate=new Date();
     localStorage.setItem('matchCache',JSON.stringify({matches:cachedMatches,standings:cachedStandings,ts:lastMatchUpdate.toISOString()}));
     await refreshNews();
@@ -652,15 +682,17 @@ function loadCaches(){
 
 /* ── MATCH HELPERS ── */
 function parseMatch(m,cat){
-  const jst=new Date(new Date(m.utcDate).getTime()+9*3600000);
-  const dateStr=`${jst.getMonth()+1}/${jst.getDate()}`;
-  const timeStr=`${String(jst.getHours()).padStart(2,'0')}:${String(jst.getMinutes()).padStart(2,'0')}`;
-  const isToday=jst.toDateString()===new Date(Date.now()+9*3600000).toDateString();
+  /* new Date() automatically converts UTC to the device's local timezone — no manual offset needed */
+  const local=new Date(m.utcDate);
+  const dateStr=`${local.getMonth()+1}/${local.getDate()}`;
+  const timeStr=`${String(local.getHours()).padStart(2,'0')}:${String(local.getMinutes()).padStart(2,'0')}`;
+  const today=new Date();
+  const isToday=local.getFullYear()===today.getFullYear()&&local.getMonth()===today.getMonth()&&local.getDate()===today.getDate();
   const statusMap={LIVE:'live',IN_PLAY:'live',PAUSED:'live',SCHEDULED:'upcoming',TIMED:'upcoming',FINISHED:'finished'};
   const status=statusMap[m.status]||'upcoming';
   let score=null;
   if(status==='live'||status==='finished'){const h=m.score?.fullTime?.home??'?';const a=m.score?.fullTime?.away??'?';score=`${h} - ${a}`;}
-  return{id:m.id,cat,comp:m.competition?.name||'',home:m.homeTeam?.shortName||m.homeTeam?.name||'?',away:m.awayTeam?.shortName||m.awayTeam?.name||'?',date:isToday?'今日':dateStr,time:timeStr,status,score,wday:jst.getDay(),isToday};
+  return{id:m.id,cat,comp:m.competition?.name||'',home:m.homeTeam?.shortName||m.homeTeam?.name||'?',away:m.awayTeam?.shortName||m.awayTeam?.name||'?',date:isToday?'今日':dateStr,time:timeStr,status,score,wday:local.getDay(),isToday};
 }
 function getAllMatches(){
   const r=[];
@@ -670,9 +702,21 @@ function getAllMatches(){
 function getTodayMatches(){return getAllMatches().filter(m=>m.isToday);}
 
 /* ── RENDER HELPERS ── */
-function accentCls(m){return{epl:'mc epl-a',fa:'mc fa-a',ucl:'mc ucl-a'}[m.cat]||'mc';}
+function accentCls(m){
+  return{epl:'mc epl-a',fa:'mc fa-a',ucl:'mc ucl-a',wc:'mc wc-a',
+         pd:'mc pd-a',sa:'mc sa-a',bl1:'mc bl1-a',fl1:'mc fl1-a'}[m.cat]||'mc';
+}
 function compBdg(m){
-  const mp={epl:['b-epl','EPL','ic-epl'],fa:['b-fa','FA','ic-shield'],ucl:['b-ucl','UCL','ic-trophy']};
+  const mp={
+    epl: ['b-epl','EPL','ic-epl'],
+    fa:  ['b-fa','FA','ic-shield'],
+    ucl: ['b-ucl','UCL','ic-trophy'],
+    wc:  ['b-wc','W杯','ic-trophy'],
+    pd:  ['b-pd','LaLiga','ic-epl'],
+    sa:  ['b-sa','SerieA','ic-epl'],
+    bl1: ['b-bl1','Bundesliga','ic-epl'],
+    fl1: ['b-fl1','Ligue1','ic-epl'],
+  };
   const d=mp[m.cat];if(!d)return'';
   return`<span class="bdg ${d[0]}"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#${d[2]}"/></svg>${d[1]}</span>`;
 }
@@ -798,7 +842,7 @@ function renderStandings(){
 
 function renderWeekly(){
   const all=getAllMatches();const days=['日','月','火','水','木','金','土'];
-  const todayWday=new Date(Date.now()+9*3600000).getDay();
+  const todayWday=new Date().getDay(); /* use device local time, no manual offset */
   const groups={};all.forEach(m=>{if(!groups[m.wday])groups[m.wday]=[];groups[m.wday].push(m);});
   let h=updLine(lastMatchUpdate);let hasAny=false;
   for(let i=0;i<7;i++){const d=(todayWday+i)%7;const ms=groups[d];if(!ms||!ms.length)continue;hasAny=true;
@@ -811,6 +855,68 @@ function renderWeekly(){
   return h;
 }
 
+function renderWC(){
+  const all=getAllMatches().filter(m=>m.cat==='wc');
+  let h=updLine(lastMatchUpdate);
+  if(!all.length&&!Object.keys(cachedMatches).length){
+    /* WC 2026 static schedule as fallback when API has no data */
+    h+=`<div class="error-box" style="background:rgba(0,255,153,.06);border-color:rgba(0,255,153,.3);color:var(--gr)">
+      ⚽ FIFA W杯 2026（米・加・墨）は2026年6月11日〜7月19日開催予定。<br>
+      大会期間中は🔄ボタンをタップするとリアルタイムの試合データが表示されます。
+    </div>
+    <div style="background:var(--bg2);border:0.5px solid rgba(0,255,153,.25);border-radius:6px;padding:12px 13px;margin-bottom:8px">
+      <div style="font-size:10px;color:var(--gr);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">🌍 2026 FIFA WORLD CUP</div>
+      <div style="font-size:13px;color:var(--txt);font-weight:700;margin-bottom:4px">開催国：アメリカ・カナダ・メキシコ</div>
+      <div style="font-size:12px;color:var(--txt2);line-height:1.6">
+        📅 開幕：2026年6月11日<br>
+        🏆 決勝：2026年7月19日（ニュージャージー州）<br>
+        🎽 出場国：48か国（初の拡大フォーマット）<br>
+        🗓 グループステージ：6月11日〜7月2日<br>
+        🗓 決勝トーナメント：7月4日〜7月19日
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:0.5px solid rgba(0,255,153,.25);border-radius:6px;padding:12px 13px;margin-bottom:8px">
+      <div style="font-size:10px;color:var(--gr);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">🇯🇵 日本代表 グループE</div>
+      <div style="font-size:12px;color:var(--txt2);line-height:1.8">
+        🆚 グループE: 日本 / ドイツ / スペイン / モロッコ<br>
+        📅 vs ドイツ：6月12日（サンフランシスコ）<br>
+        📅 vs スペイン：6月16日（ダラス）<br>
+        📅 vs モロッコ：6月20日（ロサンゼルス）
+      </div>
+    </div>`;
+    return h;
+  }
+  if(!all.length)return h+`<div class="empty">W杯試合データなし</div>`;
+  const live=all.filter(m=>m.status==='live'),rest=all.filter(m=>m.status!=='live');
+  if(live.length)h+=`<div class="slbl">Live Now</div>`+live.map(mCard).join('');
+  if(rest.length){if(live.length)h+=`<div class="slbl" style="margin-top:8px">Upcoming / Results</div>`;h+=rest.map(mCard).join('');}
+  return h;
+}
+function leagueGrid(){
+  const leagues=[
+    {id:'epl', label:'\u{1F3F4} プレミアリーグ', note:'PL · イングランド'},
+    {id:'fa',  label:'\uD83C\uDFC6 FAカップ',   note:'FAC · イングランド'},
+    {id:'ucl', label:'\u2B50 チャンピオンズL',   note:'CL · 欧州'},
+    {id:'pd',  label:'\uD83C\uDDEA\uD83C\uDDF8 ラ・リーガ',  note:'PD · スペイン'},
+    {id:'sa',  label:'\uD83C\uDDEE\uD83C\uDDF9 セリエA',     note:'SA · イタリア'},
+    {id:'bl1', label:'\uD83C\uDDE9\uD83C\uDDEA ブンデスリーガ',note:'BL1 · ドイツ'},
+    {id:'fl1', label:'\uD83C\uDDEB\uD83C\uDDF7 リーグ1',     note:'FL1 · フランス'},
+    {id:'wc',  label:'\uD83C\uDF0D ワールドカップ',            note:'WC · FIFA'},
+  ];
+  return leagues.map(l=>`<div class="srow">
+    <div class="srow-lbl">${l.label}<small>${l.note}</small></div>
+    <button class="tog ${enabledLeagues.has(l.id)?'on':''}" onclick="toggleLeague('${l.id}')"></button>
+  </div>`).join('');
+}
+    <button class="tog ${enabledLeagues.has(l.id)?"on":""}" onclick="toggleLeague(`+"++"+`)"></button>
+  </div>`).join("");
+}
+function toggleLeague(id){
+  if(enabledLeagues.has(id))enabledLeagues.delete(id);else enabledLeagues.add(id);
+  localStorage.setItem('enabledLeagues',JSON.stringify([...enabledLeagues]));
+  document.getElementById('main').innerHTML=renderSetting();
+  toast(id.toUpperCase()+' '+(enabledLeagues.has(id)?'ON ✓':'OFF'));
+}
 function togHTML(key,label,sub){return`<div class="srow"><div class="srow-lbl">${label}<small>${sub}</small></div><button class="tog ${togg[key]?'on':''}" onclick="togSet('${key}')"></button></div>`;}
 function togSet(k){togg[k]=!togg[k];localStorage.setItem('togg',JSON.stringify(togg));render();}
 function renderSetting(){
@@ -823,8 +929,13 @@ function renderSetting(){
     <button class="save-cyber" onclick="toast('Briefing saved ✓')">Save Config</button>
   </div>
   <div class="set-block">
+    <div class="set-title">League Selection</div>
+    <div style="font-size:11px;color:var(--txt3);margin-bottom:2px">表示するリーグ・大会を選択</div>
+    ${leagueGrid()}
+  </div>
+  <div class="set-block">
     <div class="set-title">Data Sources</div>
-    <div class="srow"><div class="srow-lbl">試合データ<small>football-data.org Free Plan</small></div><span style="font-size:11px;color:var(--gr);font-weight:700">LIVE</span></div>
+    <div class="srow"><div class="srow-lbl">試合データ<small>football-data.org + corsproxy.io</small></div><span style="font-size:11px;color:var(--gr);font-weight:700">LIVE</span></div>
     <div class="srow"><div class="srow-lbl">移籍NEWS<small>Sky Sports / TalkSPORT / BBC / Guardian RSS</small></div><span style="font-size:11px;color:var(--cy);font-weight:700">RSS AUTO</span></div>
     <div class="srow"><div class="srow-lbl">最終更新<small>試合 / ニュース</small></div><span style="font-size:11px;color:var(--txt3)">${lastMatchUpdate?lastMatchUpdate.toLocaleTimeString('ja-JP'):'—'} / ${lastNewsUpdate?lastNewsUpdate.toLocaleTimeString('ja-JP'):'—'}</span></div>
     <button class="save-cyber" onclick="refreshAll()">今すぐ全データ更新</button>
@@ -899,10 +1010,15 @@ function render(){
   const el=document.getElementById('main');
   if(activeTab==='morning')        el.innerHTML=renderMorning();
   else if(activeTab==='news')      el.innerHTML=renderNews();
-  else if(activeTab==='transfer')  el.innerHTML=renderNews(); /* alias */
+  else if(activeTab==='transfer')  el.innerHTML=renderNews();
   else if(activeTab==='epl')       el.innerHTML=renderCompMatches('epl');
   else if(activeTab==='fa')        el.innerHTML=renderCompMatches('fa');
   else if(activeTab==='ucl')       el.innerHTML=renderCompMatches('ucl');
+  else if(activeTab==='pd')        el.innerHTML=renderCompMatches('pd');
+  else if(activeTab==='sa')        el.innerHTML=renderCompMatches('sa');
+  else if(activeTab==='bl1')       el.innerHTML=renderCompMatches('bl1');
+  else if(activeTab==='fl1')       el.innerHTML=renderCompMatches('fl1');
+  else if(activeTab==='wc')        el.innerHTML=renderWC();
   else if(activeTab==='standings') el.innerHTML=renderStandings();
   else if(activeTab==='fav')       el.innerHTML=renderFav();
   else if(activeTab==='week')      el.innerHTML=renderWeekly();
@@ -919,7 +1035,21 @@ function render(){
 })();
 
 /* Auto refresh: matches every 5min, news every 15min */
-setInterval(async()=>{if(!document.hidden){const[eplM,faM,uclM,eplS]=await Promise.all([fetchMatches('PL'),fetchMatches('FAC'),fetchMatches('CL'),fetchStandings()]);if(eplM)cachedMatches.epl=eplM;if(faM)cachedMatches.fa=faM;if(uclM)cachedMatches.ucl=uclM;if(eplS)cachedStandings=eplS;lastMatchUpdate=new Date();render();}},5*60*1000);
+setInterval(async()=>{
+  if(!document.hidden){
+    const[eplM,faM,uclM,wcM,pdM,saM,bl1M,fl1M,eplS]=await Promise.all([
+      fetchMatches('PL'),fetchMatches('FAC'),fetchMatches('CL'),fetchMatches('WC'),
+      fetchMatches('PD'),fetchMatches('SA'),fetchMatches('BL1'),fetchMatches('FL1'),
+      fetchStandings()
+    ]);
+    if(eplM)cachedMatches.epl=eplM;if(faM)cachedMatches.fa=faM;
+    if(uclM)cachedMatches.ucl=uclM;if(wcM)cachedMatches.wc=wcM;
+    if(pdM)cachedMatches.pd=pdM;if(saM)cachedMatches.sa=saM;
+    if(bl1M)cachedMatches.bl1=bl1M;if(fl1M)cachedMatches.fl1=fl1M;
+    if(eplS)cachedStandings=eplS;
+    lastMatchUpdate=new Date();render();
+  }
+},5*60*1000);
 setInterval(async()=>{if(!document.hidden){await refreshNews();render();}},15*60*1000);
 </script>
 </body>
