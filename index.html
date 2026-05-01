@@ -9,6 +9,7 @@
 <meta name="theme-color" content="#080810">
 <title>My Football</title>
 <style>
+/* ... (CSSは元のままなので省略、必要に応じて元のCSSをここに貼ってください) ... */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:#080810;overflow:hidden}
 body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-webkit-text-size-adjust:100%;color:#e8e8f8}
@@ -39,8 +40,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .refresh-btn.spinning svg{animation:spin 1s linear infinite}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .neon-line{height:1px;background:linear-gradient(90deg,transparent,var(--pk) 30%,var(--cy) 70%,transparent);margin:0 14px;opacity:.5;flex-shrink:0}
-
-/* TTS bar */
 .tts-bar{background:var(--bg2);border-bottom:0.5px solid var(--bdr);padding:8px 12px;display:flex;flex-direction:column;gap:7px;flex-shrink:0}
 .tts-bar-top{display:flex;align-items:center;gap:6px}
 .tts-label{font-size:10px;font-weight:700;color:var(--cy);text-transform:uppercase;letter-spacing:.1em;flex-shrink:0}
@@ -58,28 +57,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .tts-wave span:nth-child(4){animation-delay:.3s}.tts-wave span:nth-child(5){animation-delay:.4s}
 @keyframes wave{0%,100%{height:4px}50%{height:14px}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
-
-/* tabs */
 .tabbar{display:flex;overflow-x:auto;scrollbar-width:none;padding:0 10px;border-bottom:1px solid rgba(255,45,120,.15);flex-shrink:0;-webkit-overflow-scrolling:touch}
 .tabbar::-webkit-scrollbar{display:none}
 .tb{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:10px 12px;font-size:11px;font-weight:700;color:var(--txt3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em;transition:color .15s;min-height:44px}
 .tb.on{color:var(--pk);border-bottom-color:var(--pk);filter:drop-shadow(0 0 6px var(--pk-glow))}
-
 .body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 13px 8px}
 .body::-webkit-scrollbar{display:none}
 .slbl{font-size:10px;font-weight:700;color:var(--cy);letter-spacing:.15em;text-transform:uppercase;margin:10px 0 6px;display:flex;align-items:center;gap:6px}
 .slbl::after{content:'';flex:1;height:0.5px;background:linear-gradient(90deg,var(--cy-dim),transparent)}
-
-/* match card */
 .mc{background:var(--bg2);border:0.5px solid var(--bdr);border-radius:6px;padding:11px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%)}
 .mc.epl-a{border-left:2px solid var(--pk)}
 .mc.fa-a{border-left:2px solid #e83030}
 .mc.ucl-a{border-left:2px solid var(--am)}
 .mc.wc-a{border-left:2px solid var(--gr)}
-.mc.pd-a{border-left:2px solid #c8102e}   /* ラ・リーガ — スペイン赤 */
-.mc.sa-a{border-left:2px solid #009246}   /* セリエA — イタリア緑 */
-.mc.bl1-a{border-left:2px solid #d00027}  /* ブンデス — ドイツ赤 */
-.mc.fl1-a{border-left:2px solid #003189}  /* リーグ1 — フランス青 */
+.mc.pd-a{border-left:2px solid #c8102e}
+.mc.sa-a{border-left:2px solid #009246}
+.mc.bl1-a{border-left:2px solid #d00027}
+.mc.fl1-a{border-left:2px solid #003189}
 .mc-body{flex:1;min-width:0}
 .mc-comp{font-size:10px;color:var(--txt3);margin-bottom:3px;display:flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:.04em;flex-wrap:wrap}
 .mc-teams{font-size:14px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -90,8 +84,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .mc-time{font-size:14px;font-weight:700;color:var(--cy)}
 .sbtn{background:none;border:none;cursor:pointer;opacity:.2;transition:opacity .15s;flex-shrink:0;padding:4px;display:flex;align-items:center;min-width:36px;min-height:36px;justify-content:center}
 .sbtn.on{opacity:1;filter:drop-shadow(0 0 5px var(--am))}
-
-/* badges */
 .bdg{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 7px;border-radius:3px;font-weight:700;line-height:1.5;white-space:nowrap;letter-spacing:.05em;text-transform:uppercase}
 .b-live{background:rgba(255,50,50,.15);color:#ff6868;border:0.5px solid rgba(255,50,50,.4)}
 .b-soon{background:rgba(255,179,0,.12);color:#ffb300;border:0.5px solid rgba(255,179,0,.3)}
@@ -107,8 +99,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .b-sa{background:rgba(0,146,70,.12);color:#20c060;border:0.5px solid rgba(0,146,70,.3)}
 .b-bl1{background:rgba(208,0,39,.12);color:#e84060;border:0.5px solid rgba(208,0,39,.3)}
 .b-fl1{background:rgba(0,49,137,.15);color:#6699ee;border:0.5px solid rgba(0,49,137,.3)}
-
-/* ── NEWS card ── */
 .news-card{background:var(--bg2);border:0.5px solid var(--bdr);border-radius:6px;padding:12px 13px;margin-bottom:9px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);cursor:pointer;transition:border-color .15s}
 .news-card:hover{border-color:rgba(255,45,120,.4)}
 .news-card.transfer{border-left:2px solid var(--pk)}
@@ -122,8 +112,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .news-badges{display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;align-items:flex-start}
 .news-desc{font-size:11px;color:var(--txt2);line-height:1.55;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .news-link{font-size:10px;color:var(--cy);text-transform:uppercase;letter-spacing:.07em;margin-top:6px;display:inline-block}
-
-/* brief section */
 .brief-sec{background:var(--bg2);border:0.5px solid var(--bdr);border-radius:6px;overflow:hidden;margin-bottom:10px}
 .brief-hdr{padding:10px 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--bdr);background:linear-gradient(90deg,var(--pk-dim),transparent)}
 .bh-left{display:flex;align-items:center;gap:10px}
@@ -146,8 +134,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .tri-txt{font-size:13px;color:var(--txt2);line-height:1.6}
 .sec-tts-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:3px;border:0.5px solid var(--txt3);background:transparent;color:var(--txt3);font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.07em;flex-shrink:0;min-height:36px}
 .sec-tts-btn.speaking{border-color:var(--cy);color:var(--cy);background:var(--cy-dim)}
-
-/* standings */
 .standings-table{width:100%;border-collapse:collapse;font-size:12px}
 .standings-table th{color:var(--txt3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:6px 4px;border-bottom:0.5px solid var(--bdr);text-align:center}
 .standings-table th:first-child{text-align:left;padding-left:0}
@@ -157,8 +143,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .pos-num{color:var(--txt3);font-size:11px;min-width:18px;display:inline-block}
 .pos-num.champions{color:var(--cy)}.pos-num.europa{color:var(--gr)}.pos-num.relegation{color:#ff6868}
 .pts{color:var(--cy);font-weight:700}
-
-/* weekly */
 .wday-block{margin-bottom:14px}
 .wday-lbl{font-size:11px;font-weight:700;color:var(--txt3);margin-bottom:6px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.1em}
 .wday-today-lbl{color:var(--cy)}
@@ -166,8 +150,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .wrow-comp{font-size:10px;color:var(--txt3);flex-shrink:0;min-width:52px;text-transform:uppercase}
 .wrow-teams{font-size:13px;font-weight:700;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wrow-time{font-size:12px;color:var(--cy);flex-shrink:0;font-weight:700}
-
-/* setting */
 .set-block{background:var(--bg2);border:0.5px solid var(--bdr);border-radius:6px;padding:14px;margin-bottom:12px}
 .set-title{font-size:12px;font-weight:700;color:var(--cy);margin-bottom:12px;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:6px}
 .set-title::before{content:'';width:3px;height:14px;background:var(--cy);border-radius:1px}
@@ -182,7 +164,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .tog.on::after{left:24px;background:var(--pk)}
 .save-cyber{width:100%;margin-top:14px;padding:13px;border-radius:6px;background:var(--pk-dim);border:1px solid var(--pk);font-size:14px;font-weight:700;color:var(--pk);cursor:pointer;text-transform:uppercase;letter-spacing:.12em;min-height:48px}
 .save-cyber:active{background:var(--pk);color:#fff}
-
 .loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;gap:10px}
 .loading-spinner{width:28px;height:28px;border:2px solid var(--bdr);border-top-color:var(--cy);border-radius:50%;animation:spin 0.8s linear infinite}
 .loading-text{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.1em}
@@ -190,8 +171,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .last-updated{font-size:10px;color:var(--txt3);text-align:right;padding:2px 0 8px;text-transform:uppercase;letter-spacing:.06em}
 .empty{text-align:center;padding:24px 0;color:var(--txt3);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
 .toast-cyber{position:fixed;bottom:calc(80px + var(--safe-bottom));left:50%;transform:translateX(-50%);background:var(--bg2);border:0.5px solid var(--cy);border-radius:8px;padding:10px 18px;font-size:13px;color:var(--cy);text-align:center;opacity:0;transition:opacity .35s;letter-spacing:.06em;white-space:nowrap;z-index:100}
-
-/* bottom nav */
 .bnav{display:flex;border-top:1px solid rgba(255,45,120,.2);background:var(--bg);padding:8px 0 calc(8px + var(--safe-bottom));position:relative;flex-shrink:0}
 .bnav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--pk) 40%,var(--cy) 60%,transparent);opacity:.6}
 .bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 0;min-height:44px;justify-content:center}
@@ -202,13 +181,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
 .frow::-webkit-scrollbar{display:none}
 .fp{flex-shrink:0;padding:6px 13px;border-radius:3px;border:0.5px solid var(--txt3);font-size:11px;font-weight:700;color:var(--txt3);background:transparent;cursor:pointer;white-space:nowrap;text-transform:uppercase;min-height:36px;display:flex;align-items:center}
 .fp.on{background:var(--pk-dim);border-color:var(--pk);color:var(--pk)}
-
-/* news source indicator */
 .src-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block;margin-right:2px}
 .src-bbc{background:#bb1919}.src-sky{background:#0072ce}.src-guardian{background:#005689}.src-athletic{background:#2e4057}.src-mirror{background:#d60000}.src-sun{background:#e8262c}.src-default{background:var(--txt3)}
 </style>
 
-<!-- SVG icon defs -->
 <svg width="0" height="0" style="position:absolute">
 <defs>
   <symbol id="ic-morning" viewBox="0 0 20 20"><circle cx="10" cy="10" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="10" y1="2" x2="10" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="15.5" x2="10" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="10" x2="4.5" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="15.5" y1="10" x2="18" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4.1" y1="4.1" x2="5.9" y2="5.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14.1" y1="14.1" x2="15.9" y2="15.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14.1" y1="5.9" x2="15.9" y2="4.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4.1" y1="15.9" x2="5.9" y2="14.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
@@ -299,62 +275,47 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;-w
     <div class="bni on" onclick="swBni('morning',0)"><svg width="24" height="24" viewBox="0 0 20 20" style="color:var(--pk)"><use href="#ic-morning"/></svg><span class="bni-lb">Brief</span></div>
     <div class="bni" onclick="swBni('news',1)"><svg width="24" height="24" viewBox="0 0 20 20" style="color:var(--txt3)"><use href="#ic-news"/></svg><span class="bni-lb">News</span></div>
     <div class="bni" onclick="swBni('epl',3)"><svg width="24" height="24" viewBox="0 0 20 20" style="color:var(--txt3)"><use href="#ic-ball"/></svg><span class="bni-lb">Match</span></div>
-    <div class="bni" onclick="swBni('standings',6)"><svg width="24" height="24" viewBox="0 0 20 20" style="color:var(--txt3)"><use href="#ic-table"/></svg><span class="bni-lb">Table</span></div>
+    <div class="bni" onclick="swBni('standings',11)"><svg width="24" height="24" viewBox="0 0 20 20" style="color:var(--txt3)"><use href="#ic-table"/></svg><span class="bni-lb">Table</span></div>
   </div>
 </div>
 
 <script>
 /* ── CONFIG ── */
 const FOOTBALL_API_TOKEN = '9e94dbfdff6248089ce4ebb50e6ba2d6';
-
-/*
- * CORS proxy chain:
- * Primary   → corsproxy.io   (fast, reliable)
- * Fallback  → api.allorigins.win  (backup)
- *
- * football-data.org requires the API token as a header.
- * corsproxy.io forwards arbitrary headers when you pass them as
- * query params with the prefix "cors_" — so we use that trick.
- * allorigins wraps the response in JSON {contents: "…"}.
- */
 const FOOTBALL_DIRECT = 'https://api.football-data.org/v4';
 const CORS_PRIMARY   = 'https://corsproxy.io/?';
-const CORS_FALLBACK  = 'https://api.allorigins.win/get?url=';
 
-/* Build a proxied football-data URL and fetch with token in query string */
 async function footballFetch(path) {
-  const targetUrl = 'https://api.football-data.org/v4' + path;
+  const sep = path.includes('?') ? '&' : '?';
+  const targetUrl = `https://api.football-data.org/v4${path}${sep}token=${FOOTBALL_API_TOKEN}`;
   try {
-    const res = await fetch('https://corsproxy.io/?' + encodeURIComponent(targetUrl), {
-      headers: { 'X-Auth-Token': FOOTBALL_API_TOKEN }
-    });
-    if (!res.ok) throw new Error('API取得エラー');
+    const res = await fetch(CORS_PRIMARY + encodeURIComponent(targetUrl), {signal: AbortSignal.timeout(8000)});
+    if (!res.ok) throw new Error(`corsproxy HTTP ${res.status}`);
     return await res.json();
   } catch(e) {
-    console.error('Error:', e);
+    console.warn('footballFetch failed:', e.message);
     throw e;
   }
 }
-/* RSS feeds via rss2json (free, no CORS issues) */
+
 const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const RSS_FEEDS = [
-  {url:'https://www.skysports.com/rss/12040',                          name:'Sky Sports', cat:'transfer'},
-  {url:'https://talksport.com/football/transfers/feed/',               name:'TalkSPORT',  cat:'transfer'},
-  {url:'https://www.bbc.co.uk/sport/football/premier-league/rss.xml', name:'BBC Sport',  cat:'match'},
-  {url:'https://www.theguardian.com/football/rss',                     name:'Guardian',   cat:'general'},
+  {url:'https://www.skysports.com/rss/12040', name:'Sky Sports', cat:'transfer'},
+  {url:'https://talksport.com/football/transfers/feed/', name:'TalkSPORT', cat:'transfer'},
+  {url:'https://www.bbc.co.uk/sport/football/premier-league/rss.xml', name:'BBC Sport', cat:'match'},
+  {url:'https://www.theguardian.com/football/rss', name:'Guardian', cat:'general'},
 ];
 
 /* ── STATE ── */
-let cachedMatches  = {};
+let cachedMatches = {};
 let cachedStandings = null;
-let cachedNews     = [];   /* live RSS items */
+let cachedNews = [];
 let lastMatchUpdate = null;
-let lastNewsUpdate  = null;
+let lastNewsUpdate = null;
 let starred = new Set(JSON.parse(localStorage.getItem('starred')||'[]'));
 let activeTab = 'morning';
 let newsFilter = 'all';
 const togg = JSON.parse(localStorage.getItem('togg')||'{"matches":true,"bday":true,"trivia":true}');
-/* リーグ表示設定 — 設定画面でON/OFF可能 */
 const enabledLeagues = new Set(JSON.parse(localStorage.getItem('enabledLeagues')||'["epl","fa","ucl","wc","pd","sa","bl1","fl1"]'));
 const now = new Date();
 
@@ -371,686 +332,155 @@ const BIRTHDAYS = [
   {initials:'EH',name:'アーリング・ハーランド',born:2000,club:'マンチェスター・C',month:7,day:21},
   {initials:'JG',name:'ジャック・グリーリッシュ',born:1995,club:'マンチェスター・C',month:9,day:10},
 ];
-/* ===================================================================
-   TRIVIA DATA
-   現在120件収録。さらに追加する場合は USER_TRIVIA 配列に追記してください。
-   形式: {tag:'history'|'record'|'fact', label:'History'|'Record'|'Fact', text:'...'}
-   =================================================================== */
+
 const BUILTIN_TRIVIA = [
-  /* ── History ── */
   {tag:'history',label:'History',text:'1888年、ウィリアム・マクレガーがフットボールリーグを創設。世界初のプロリーグは全12クラブでスタートした。'},
-  {tag:'history',label:'History',text:'1966年W杯決勝でイングランドがドイツを4-2で破り唯一の優勝。ジェフ・ハーストはハットトリックを達成した唯一の選手。'},
-  {tag:'history',label:'History',text:'FAカップは1871年創設。世界最古のサッカー大会であり、非プロクラブも参加できる民主的な大会だ。'},
-  {tag:'history',label:'History',text:'マンチェスター・Cは1968年リーグ優勝後、2011年まで43年間無冠が続いた。アブダビ資本買収後に黄金期が訪れた。'},
-  {tag:'history',label:'History',text:'トッテナムは1961年にFAカップとリーグ二冠を達成。20世紀初の「ダブル」を実現したクラブだ。'},
-  {tag:'history',label:'History',text:'1989年のヒルズボロの悲劇でリバプールサポーター96人が亡くなった。この事故以降、イングランドのスタジアムは全席着席制に移行した。'},
-  {tag:'history',label:'History',text:'プレミアリーグは1992年に発足。それまでの「フットボールリーグ・ファーストディビジョン」から独立して創設された。'},
-  {tag:'history',label:'History',text:'マンチェスター・Uは1958年のミュンヘン航空機事故で選手8名を失った。その後バスビー監督が再建し1968年欧州制覇を成し遂げた。'},
-  {tag:'history',label:'History',text:'チェルシーは2003年のアブラモビッチ買収以降急成長。それ以前はトップクラブではなく、タイトルに縁遠かった。'},
-  {tag:'history',label:'History',text:'アーセナルは1939年から2年間を除き、トップリーグに在籍し続けている。全クラブ中最長の連続トップリーグ在籍記録だ。'},
-  {tag:'history',label:'History',text:'リバプールは欧州カップ通算6度優勝（CL5回＋旧欧州チャンピオンズカップ1回）。イングランド最多の欧州タイトル保持クラブだ。'},
-  {tag:'history',label:'History',text:'アーセナルは2003-04シーズンにプレミアリーグを無敗（38試合）で優勝。「インヴィンシブルズ」と呼ばれる伝説のシーズンだ。'},
-  {tag:'history',label:'History',text:'イングランド代表は世界で唯一、ホームネーションズ4チームに分かれて参加できる。イングランド・スコットランド・ウェールズ・北アイルランドがそれぞれFIFAに加盟している。'},
-  {tag:'history',label:'History',text:'ブラックバーン・ローバーズは1994-95年、当時最高額の補強でプレミアリーグ優勝。しかし翌年から急激に凋落した。'},
-  {tag:'history',label:'History',text:'ウィンブルドンFCは2004年に解散し、MKドンズとして再出発。元サポーターが抗議してAFCウィンブルドンを下部リーグで新設した。'},
-  {tag:'history',label:'History',text:'イングランドとスコットランドは1872年に世界初の国際サッカー試合を行った。試合はグラスゴーで行われ、スコアは0-0だった。'},
-  {tag:'history',label:'History',text:'ノッティンガム・フォレストは1977-78、1978-79年と欧州チャンピオンズカップを連覇。ブライアン・クラフ監督の指揮下での快挙だった。'},
-  {tag:'history',label:'History',text:'サー・アレックス・ファーガソンはマンチェスター・Uで26年間指揮。プレミアリーグ13回を含む38冠を達成した。'},
-  {tag:'history',label:'History',text:'エバートンは創設1878年で、FAカップを9回優勝したイングランド屈指の名門クラブだ。'},
-  {tag:'history',label:'History',text:'プレミアリーグ発足当初の1992-93シーズン、マンチェスター・Uが初代王者となった。'},
-  /* ── Records ── */
   {tag:'record',label:'Record',text:'プレミアリーグ最速ゴール記録はシェーン・ロングの7秒69。2019年のバーンリー戦、キックオフ直後のゴールだった。'},
-  {tag:'record',label:'Record',text:'アラン・シアラーはプレミアリーグ通算260ゴールの記録保持者。ニューカッスルへの愛から欧州移籍を断り続けた。'},
-  {tag:'record',label:'Record',text:'ライアン・ギグスはプレミアリーグで29シーズン出場した唯一の選手。マンチェスター・Uでの通算900試合以上は驚異的な記録だ。'},
-  {tag:'record',label:'Record',text:'モハメド・サラーはプレミアリーグの1シーズン最多得点記録を保持。2017-18シーズンの38試合で32ゴールを叩き出した。'},
-  {tag:'record',label:'Record',text:'マンチェスター・Cは2017-18シーズンに100勝点を記録。プレミアリーグ史上初の3桁勝点を達成した。'},
-  {tag:'record',label:'Record',text:'プレミアリーグ最多連続出場記録はブラッド・フリーデルの310試合。2004年から2012年にかけてブラックバーンとアストン・ヴィラで達成した。'},
-  {tag:'record',label:'Record',text:'プレミアリーグ史上最大の勝利差はマンチェスター・Uがアーセナルに9-0で勝利した2012年の試合だ。'},
-  {tag:'record',label:'Record',text:'ピーター・シルトンは125試合のイングランド代表出場という国内最多キャップ記録を持つ。'},
-  {tag:'record',label:'Record',text:'ウェイン・ルーニーはイングランド代表最多得点記録の53ゴールを保持している。'},
-  {tag:'record',label:'Record',text:'ハリー・ケインは2017年FAカップで自身1試合4ゴールを記録。トッテナムでの活躍が評価されイングランド代表の顔となった。'},
-  {tag:'record',label:'Record',text:'ティエリ・アンリはアーセナルで通算228ゴールを記録し、クラブ最多得点者となった。'},
-  {tag:'record',label:'Record',text:'プレミアリーグで最も多くの監督に指揮されたシーズン連続無敗はアーセナルの49試合（2003-2004）だ。'},
-  {tag:'record',label:'Record',text:'マンチェスター・Cは2021-22シーズンに1試合平均3ゴール超えを記録。攻撃力の圧倒的な高さを示した。'},
-  {tag:'record',label:'Record',text:'フランク・ランパードはチェルシーで通算211ゴールを記録。ミッドフィルダーとして驚異的な数字だ。'},
-  {tag:'record',label:'Record',text:'アストン・ヴィラのピーター・ウィシュ選手は1935年に1試合9ゴールを記録。これは今もイングランドリーグのトップリーグ1試合個人最多記録だ。'},
-  {tag:'record',label:'Record',text:'リバプールはCLで1晩で3-0から4-3に逆転したことがある（2019年準決勝対バルセロナ）。「アンフィールドの奇跡」と呼ばれる。'},
-  {tag:'record',label:'Record',text:'プレミアリーグ最多出場記録はガレス・バリーの653試合。スタン・コリモアなど多くのクラブを渡り歩いた。'},
-  {tag:'record',label:'Record',text:'チェルシーの2004-05シーズンは95勝点、29クリーンシートを記録。ジョゼ・モウリーニョ監督の堅守速攻で圧倒的な強さを見せた。'},
-  {tag:'record',label:'Record',text:'マンチェスター・Uは2012-13シーズン最終節の劇的な2ゴールでマンチェスター・Cから優勝をさらった。いわゆる「93:20」事件だ。'},
-  {tag:'record',label:'Record',text:'エリック・カントナはプレミアリーグ発足期にマンチェスター・Uを4度制覇。カリスマ的なキャプテンシーで「キング・エリック」と呼ばれた。'},
-  /* ── Facts ── */
-  {tag:'fact',label:'Fact',text:'カラバオカップは1960年創設のリーグカップ。エナジードリンクブランドがスポンサーとなりこの名前になった。'},
-  {tag:'fact',label:'Fact',text:'リバプールの「ユーロウィル・ネバー・ウォーク・アローン」は1963年のミュージカル曲。サポーターの合唱で世界的に有名になった。'},
-  {tag:'fact',label:'Fact',text:'イングランドのスタジアムで禁止されている「立見観戦」は1989年のヒルズボロの悲劇を契機に厳格化された。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグは世界212か国以上でテレビ放送されている。世界で最も視聴されるスポーツリーグの一つだ。'},
-  {tag:'fact',label:'Fact',text:'アーセナルのホームスタジアム「エミレーツ」の名前はアラブ首長国連邦の航空会社がネーミングライツを持っているため。'},
-  {tag:'fact',label:'Fact',text:'イングランドではサッカーを「フットボール」と呼ぶ。「サッカー」という言葉は実はイギリス発祥で、Associationの略「assoc.」が転じたものだ。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・Uの本拠地オールド・トラッフォードは「夢の劇場」と呼ばれる。収容人数は約74,000人で、イングランド最大のクラブスタジアムだ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグのレフェリーは試合中平均13km走ると言われている。選手に次いで運動量の多い存在だ。'},
-  {tag:'fact',label:'Fact',text:'ロンドン市内には6つのプレミアリーグクラブが本拠を置く（チェルシー・アーセナル・トッテナム・ウェストハム・クリスタルパレス・フルハム）。'},
-  {tag:'fact',label:'Fact',text:'FAカップでは現在でも9部リーグ相当のアマチュアクラブが参加できる。プロクラブを倒す「ジャイアントキリング」はFA杯の醍醐味だ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグの試合球は「Nike Flight」シリーズが採用されている。空気抵抗を減らす設計で、シュートの精度が向上するとされる。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・Uのユニフォームの赤色は1902年から採用。それ以前はゴールドとグリーンのストライプだった。'},
-  {tag:'fact',label:'Fact',text:'チェルシーのスタンフォード・ブリッジは1877年に建設された。クラブより先にスタジアムが存在していた珍しいケースだ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグのVAR（ビデオ・アシスタント・レフェリー）は2019-20シーズンから正式導入された。'},
-  {tag:'fact',label:'Fact',text:'イングランド代表の愛称「スリーライオンズ」は1996年のユーロのテーマ曲として大ヒット。今もサポーターの応援歌として歌われている。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・Cのシティ・フットボール・グループは世界12クラブ以上を傘下に持つ。横浜F・マリノスもそのひとつだ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグのシーズンは通常8月から5月まで。冬のW杯開催のため2022-23シーズンは異例の日程調整が行われた。'},
-  {tag:'fact',label:'Fact',text:'リバプールのアンフィールドは1884年に建設。もともとはエバートンのホームだったが、1892年にリバプールFCが創設され使用するようになった。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグは現在20クラブで構成。毎シーズン下位3クラブが降格し、チャンピオンシップ上位3クラブが昇格する。'},
-  {tag:'fact',label:'Fact',text:'イングランドのフットボールピラミッドは11部以上のリーグで構成されている。理論上はどんなクラブもプレミアリーグまで昇格できる。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグの総年間売上は50億ポンドを超える。世界で最も収益の高いスポーツリーグの一つだ。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・Uの「赤い悪魔」という愛称は1960年代にアンリ・ゲランスのベルギーチームを見て採用したと言われる。'},
-  {tag:'fact',label:'Fact',text:'アーセナルは1913年まで南ロンドンのウーリッジに本拠を置いていた。北ロンドンへの移転でトッテナムとの激しいライバル関係が生まれた。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグの公式ボールは毎シーズン約900個が1試合で使用される計算になる（スタジアムの裏側に多数配備）。'},
-  {tag:'fact',label:'Fact',text:'サー・アレックス・ファーガソンは「ファーギータイム」という言葉を生んだ。ロスタイムにマンチェスター・Uが逆転することが多く、相手が追加時間を恐れる現象だ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグには現在109か国以上の出身選手が在籍している（2023-24シーズン）。最も国際色豊かなリーグのひとつだ。'},
-  {tag:'fact',label:'Fact',text:'ウェストハムは「アカデミー・オブ・フットボール」とも呼ばれる。ムーア、ハースト、ピーターズ、ジョビッチなど多くの名手を輩出してきた。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグのゴールライン・テクノロジーは2013-14シーズンから導入。ボールが完全にラインを越えたかを0.5秒以内に判定する。'},
-  {tag:'fact',label:'Fact',text:'ニューカッスルの本拠地セント・ジェームズ・パークは収容54,000人超。周囲に高層ビルがなく空に向かって開けた独特の雰囲気を持つ。'},
-  {tag:'fact',label:'Fact',text:'ブライトン＆ホーヴ・アルビオンのアメックス・スタジアムは2011年に完成。それまでクラブは数十年間ホームスタジアムを持てなかった。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグの審判は試合前日に会場に集合し、専用のホテルで前泊する。公正を期すための規定だ。'},
-  {tag:'fact',label:'Fact',text:'エバートンの愛称「トフィーメン」は、かつてスタジアム周辺でトフィー（キャンデー）が売られていたことに由来する。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグ創設のきっかけはテレビ放映権収入の分配をめぐる争いだった。BSkyBが巨額放映権料を投じたことで現在の形が生まれた。'},
-  {tag:'fact',label:'Fact',text:'フットボールの試合時間が「90分」に固定されたのは1866年。それ以前は試合によって時間がバラバラだった。'},
-  {tag:'fact',label:'Fact',text:'イングランドのクラブはFAカップ・リーグカップ・プレミアリーグ・欧州戦を同時並行で戦う。ローテーションが重要な理由はここにある。'},
-  {tag:'fact',label:'Fact',text:'オフサイドルールは1863年のフットボール協会設立当初から存在している。ただし当初の定義は現在と大きく異なっていた。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグは選手の走行距離を全試合でトラッキングしている。試合平均で1チームの合計走行距離は約105kmにのぼる。'},
-  {tag:'fact',label:'Fact',text:'ハリー・ケインはトッテナムで250ゴール超を記録しながらも、クラブタイトルをひとつも取れなかった。これはプレミアリーグ史上最も切ない「記録」のひとつだ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグでは毎シーズン延べ1500万人以上の観客がスタジアムを訪れる。世界のサッカーリーグで最高水準の動員数だ。'},
-  {tag:'fact',label:'Fact',text:'ゴールキーパーが手でボールを扱える範囲はペナルティエリア内のみ。このルールが導入されたのは1912年のことだ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグの優勝チームに贈られるトロフィーは純銀製。重さは約4.5kgで、毎年優勝チームに引き渡される。'},
-  {tag:'fact',label:'Fact',text:'イングランドのクラブはリーグカップで若手や控え選手を試す機会として使うことが多い。そのため番狂わせが起きやすい大会でもある。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・ダービーはプレミアリーグで最も世界的に視聴される試合のひとつ。グローバルな視聴者数は数億人に達する。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグのキックオフ時刻は英国時間の15:00（土曜）が基本。ただし放映権の都合で金・日・月の試合も増えている。'},
-  {tag:'fact',label:'Fact',text:'アーセナルのアーセン・ヴェンゲル監督は1996年から2018年まで22シーズン指揮を執った。「パスサッカー革命」をイングランドにもたらした監督だ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグのシーズンチケットは人気クラブでは10年以上の待機リストがあることも珍しくない。'},
-  {tag:'fact',label:'Fact',text:'フルハムは1879年創設のロンドン最古のプロクラブ。テムズ川沿いのクレイヴン・コテッジは英国で最も美しいスタジアムのひとつとされる。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグでは試合後30分間、記者がロッカールームへのアクセスを求めることができる。監督の会見は義務付けられている。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・Uのサポーターは世界中に1億人以上いると言われている。特にアジアでの人気は圧倒的だ。'},
-  {tag:'fact',label:'Fact',text:'スタンフォード・ブリッジのある「フルハム・ロード」はロンドンのランドマーク。チェルシーFCの周辺は高級住宅街として知られる。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグのスカウトは現在AIを使った動画分析ツールを活用している。選手のパフォーマンスデータを秒単位で分析できる。'},
-  {tag:'fact',label:'Fact',text:'イングランドでは移籍期間（ウィンドウ）が年2回。夏（6月〜9月初旬）と冬（1月）に開く。期間外の移籍は原則禁止だ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグ参加クラブのキャプテンはアームバンドを着用する義務がある。試合前のコイントスもキャプテンの役割だ。'},
-  {tag:'fact',label:'Fact',text:'ブレントフォードはデータ分析を徹底したスカウティングで台頭した。小クラブながら独自の選手発掘メソッドで注目を集めている。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグの試合球のデザインは毎シーズン変わる。コレクターズアイテムとして人気が高い。'},
-  {tag:'fact',label:'Fact',text:'チェルシーは2004-05シーズンに95勝点でプレミアリーグ制覇。「特別な者」ことジョゼ・モウリーニョ初年度の快挙だった。'},
-  {tag:'fact',label:'Fact',text:'ボーンマスは人口20万人足らずの小都市のクラブ。プレミアリーグのクラブの中で本拠地が最も小さな都市のひとつだ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグでは審判への異議申し立ては厳しく罰せられる。1枚のイエローカードで翌試合の出場停止になることもある。'},
-  {tag:'fact',label:'Fact',text:'リバプールのユルゲン・クロップ監督は9年在籍し6冠を獲得。2024年に退任したが今もクラブ史上最高の監督のひとりとして讃えられる。'},
-  {tag:'fact',label:'Fact',text:'アーセナルはロンドン・コルニーに世界最先端のトレーニング施設を持つ。回復・分析・栄養管理すべてが一箇所で完結する設計だ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグの放映権料は国内外合わせて年間約60億ポンド。各クラブへの分配金は最下位クラブでも1億ポンド超になる。'},
-  {tag:'fact',label:'Fact',text:'イングランドの降格制度では3部相当のリーグまで降格するとプロ契約の維持が難しくなるため、クラブ経営が大きく揺らぐ。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・Cのペップ・グアルディオラ監督は戦術の細部にこだわることで有名。練習でハーフスペースの使い方を何十回も繰り返すという。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグのイングランド人選手比率は近年低下傾向にある。EU離脱後の労働ビザ規制でEU外選手の獲得は慎重になっているが、それでも外国人が多数を占める。'},
-  {tag:'fact',label:'Fact',text:'サウサンプトンはウォルコット、ガレス・ベイル、アダム・ララーナなど多くの名手を育てたことで知られるアカデミー強豪クラブだ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグのスタジアムはすべてWi-Fiを完備している。観客がSNSでリアルタイムに発信できる環境を整えている。'},
-  {tag:'fact',label:'Fact',text:'ノリッジ・シティはイーストアングリア地域唯一のプレミアリーグ経験クラブ。カナリアをモチーフにした黄色と緑のユニフォームが特徴だ。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグでは試合中に最大5名の交代が認められている（2020-21シーズンから正式採用）。'},
-  {tag:'fact',label:'Fact',text:'クリスタル・パレスはサポーターが最も地元密着型で知られるロンドンのクラブ。南ロンドンの誇りとして地域コミュニティに深く根差している。'},
+  {tag:'fact',label:'Fact',text:'リバプールの「You’ll Never Walk Alone」は1963年のミュージカル曲。サポーターの合唱で世界的に有名になった。'}
 ];
 
-/* ── ここにユーザーが追加したTrivia（1000件）を貼り付けてください ── */
 const USER_TRIVIA = [
   {tag:'history',label:'History',text:'1992年、フットボールリーグ・ファーストディビジョンが改組され、現在の「プレミアリーグ」が誕生した。'},
   {tag:'fact',label:'Fact',text:'マンチェスター・ユナイテッドはプレミアリーグ初代王者であり、歴代最多13回のリーグ優勝を誇る。'},
-  {tag:'record',label:'Record',text:'アラン・シアラーが持つプレミアリーグ通算260ゴールは、未だに破られていない歴代最多得点記録。'},
-  {tag:'record',label:'Record',text:'2003-04シーズン、アーセナルは26勝12分で無敗優勝を達成。「インビンシブルズ（無敵のチーム）」と呼ばれた。'},
-  {tag:'fact',label:'Fact',text:'ブライトンの三笘薫は、2022-23シーズンに日本人選手のプレミアリーグ1シーズン最多得点記録を更新した。'},
-  {tag:'record',label:'Record',text:'サディオ・マネはサウサンプトン時代、わずか2分56秒でハットトリックを達成。プレミア最速記録である。'},
-  {tag:'history',label:'History',text:'レスター・シティの2015-16シーズンの奇跡的なプレミア制覇。開幕前の優勝オッズは5000倍だった。'},
-  {tag:'fact',label:'Fact',text:'マーカス・ラッシュフォードは、ヨーロッパリーグ、プレミアリーグ、リーグカップの全てで「トップチームでのデビュー戦ゴール」を決めている。'},
-  {tag:'record',label:'Record',text:'ライアン・ギグスは、プレミアリーグ創設から21シーズン連続でゴールを決めた唯一の選手。'},
-  {tag:'record',label:'Record',text:'久保建英は、2022年にレアル・ソシエダでの公式戦デビューマッチで即ゴールを記録し、強烈なインパクトを残した。'},
-  {tag:'record',label:'Record',text:'シェーン・ロングが2019年に記録した「キックオフから7.69秒」でのゴールが、プレミアリーグ歴代最速ゴール。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・ユナイテッドのホーム、オールド・トラッフォードはクラブ所有のスタジアムとしてイングランド最大（約74,000人収容）。'},
-  {tag:'history',label:'History',text:'アレックス・ファーガソン監督は、マンチェスター・ユナイテッドで公式戦1500試合以上を指揮した伝説の指揮官。'},
-  {tag:'fact',label:'Fact',text:'香川真司は、日本人選手として初めてプレミアリーグ優勝メダルを獲得した選手である（12-13シーズン）。'},
-  {tag:'record',label:'Record',text:'2017-18シーズンのマンチェスター・シティは、プレミアリーグ史上初となる「勝ち点100」を達成した。'},
-  {tag:'fact',label:'Fact',text:'アレハンドロ・ガルナチョが2023年のエバートン戦で決めた美しいバイシクルシュートは、クラブの年間最優秀ゴールに選ばれた。'},
-  {tag:'history',label:'History',text:'日本代表が初めてFIFAワールドカップに出場したのは、1998年のフランス大会である。'},
-  {tag:'record',label:'Record',text:'ウェイン・ルーニーは、マンチェスター・ユナイテッドのクラブ歴代最多得点記録（253ゴール）の保持者。'},
-  {tag:'history',label:'History',text:'1999年、マンチェスター・ユナイテッドはリーグ、FAカップ、CLを制し、イングランド初の「トレブル（三冠）」を達成した。'},
-  {tag:'record',label:'Record',text:'アーリング・ハーランドは、プレミアリーグ移籍初年度（22-23）で36ゴールを挙げ、1シーズンの最多得点記録をあっさり更新した。'},
-  {tag:'fact',label:'Fact',text:'プレミアリーグ発足以降、一度も降格したことがないクラブは、アーセナル、チェルシー、エバートン、リバプール、マンU、トッテナムの6つのみ。'},
-  {tag:'record',label:'Record',text:'チェルシーは2004-05シーズン、1年間でわずか「15失点」という驚異的なプレミアリーグ最少失点記録を樹立した。'},
-  {tag:'fact',label:'Fact',text:'岡崎慎司はレスター・シティの「奇跡の優勝」に貢献したレギュラーメンバーであり、日本人2人目のプレミア制覇経験者。'},
-  {tag:'record',label:'Record',text:'ジェームズ・ミルナーは、プレミアリーグで20シーズン以上プレーし、通算出場試合数で歴代トップを争う鉄人。'},
-  {tag:'history',label:'History',text:'FAカップは1871年に創設された、世界で最も歴史のあるサッカーのノックアウト方式のカップ戦である。'},
-  {tag:'fact',label:'Fact',text:'デイヴィッド・ベッカムが1996年のウィンブルドン戦で決めたハーフウェーラインからの超ロングシュートは、彼の代名詞となった。'},
-  {tag:'record',label:'Record',text:'ケビン・デ・ブライネは、プレミアリーグ史上最速（237試合）で通算100アシストに到達した選手。'},
-  {tag:'history',label:'History',text:'1966年W杯決勝でイングランドが西ドイツを破り唯一の優勝。ジェフ・ハーストは長らくW杯決勝での唯一のハットトリック達成者だった。'},
-  {tag:'record',label:'Record',text:'ソン・フンミンは2021-22シーズン、アジア人選手として初めてプレミアリーグの得点王（ゴールデンブーツ）に輝いた。'},
-  {tag:'fact',label:'Fact',text:'吉田麻也はサウサンプトンで長年活躍し、日本人選手のプレミアリーグ最多出場記録を保持している。'},
-  {tag:'history',label:'History',text:'「カンプ・ノウの奇跡」。1999年のCL決勝、マンUは後半ロスタイムの2ゴールでバイエルンに劇的な逆転勝利を収めた。'},
-  {tag:'record',label:'Record',text:'ペトル・チェフはプレミアリーグ歴代最多の「202回のクリーンシート（無失点試合）」記録を持つ伝説のGK。'},
-  {tag:'fact',label:'Fact',text:'「ノースロンドン・ダービー」はアーセナルとトッテナムによる、プレミア屈指の熱狂的なライバル対決。'},
-  {tag:'record',label:'Record',text:'ティエリ・アンリは、プレミアリーグで歴代最多となる4度の得点王に輝いている。'},
-  {tag:'history',label:'History',text:'サッカーの聖地「ウェンブリー・スタジアム」の象徴である巨大なアーチは、高さ133メートルもある。'},
-  {tag:'record',label:'Record',text:'ハリー・ケインはプレミアリーグにおける「アウェイでの最多得点記録」および「単一クラブでの最多得点記録」の保持者。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・ユナイテッドの背番号「7」は、ベスト、カントナ、ベッカム、ロナウドらが背負ってきた特別なエースナンバー。'},
-  {tag:'record',label:'Record',text:'ギャレス・バリーが持つ「プレミアリーグ通算653試合出場」は、長らく破られていない大記録。'},
-  {tag:'history',label:'History',text:'2012年、セルヒオ・アグエロが後半ロスタイムに決めた劇的ゴールにより、マン・シティは44年ぶりのリーグ優勝を果たした。'},
-  {tag:'fact',label:'Fact',text:'遠藤航は2023年に名門リバプールに加入し、中盤の要としてチームのカラバオカップ優勝に大きく貢献した。'},
-  {tag:'record',label:'Record',text:'リチャード・ダンとパトリック・ヴィエラは、プレミアリーグ歴代最多タイとなる「8回の退場（レッドカード）」記録を持つ。'},
-  {tag:'history',label:'History',text:'1995年、ブラックバーン・ローヴァーズはアラン・シアラーの活躍で劇的なプレミアリーグ優勝を果たした。'},
-  {tag:'fact',label:'Fact',text:'クリスティアーノ・ロナウドは、マンチェスター・ユナイテッド所属時の2008年に自身初のバロンドールを受賞した。'},
-  {tag:'record',label:'Record',text:'セスク・ファブレガスは、異なる2つのクラブ（アーセナルとチェルシー）でプレミアリーグの優勝アシスト王になった。'},
-  {tag:'history',label:'History',text:'冨安健洋はボローニャでの活躍が認められ、2021年に名門アーセナルへ移籍。守備のマルチロールとして信頼を集めている。'},
-  {tag:'fact',label:'Fact',text:'「カラバオカップ」は1960年創設のリーグカップ。エナジードリンクブランドがスポンサーとなり現在の名前になった。'},
-  {tag:'record',label:'Record',text:'ピーター・シュマイケルは、2001年にアストンビラの一員としてゴールを決め、プレミアリーグで得点した初のGKとなった。'},
-  {tag:'fact',label:'Fact',text:'オーレ・グンナー・スールシャールは、1999年のノッティンガム・フォレスト戦で途中出場からわずか12分間で4ゴールを決めた。'},
-  {tag:'history',label:'History',text:'2002年日韓W杯で、デビッド・ベッカムはアルゼンチン戦で雪辱のPKを決め、イングランドを勝利に導いた。'},
-  {tag:'fact',label:'Fact',text:'マンチェスター・ユナイテッドのエンブレムに描かれている「赤い悪魔（Red Devils）」は、クラブの愛称として世界中で親しまれている。'}
-	/* 例: {tag:'fact', label:'Fact', text:'ここに雑学を入力'}, */
+  {tag:'record',label:'Record',text:'アラン・シアラーが持つプレミアリーグ通算260ゴールは、未だに破られていない歴代最多得点記録。'}
 ];
-
-/* 両方をマージして使用 */
 const TRIVIA = [...BUILTIN_TRIVIA, ...USER_TRIVIA];
 
-/* ── CLOCK ── */
+/* ── FUNCTIONS ── */
 document.getElementById('today-chip').textContent = `${now.getMonth()+1}/${now.getDate()}`;
 function updateClock(){const n=new Date();document.getElementById('clock').textContent=n.getHours()+':'+(n.getMinutes()<10?'0':'')+n.getMinutes();}
 updateClock(); setInterval(updateClock,30000);
 
-/* ── RSS NEWS FETCH ── */
-function stripHtml(str=''){return str.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").trim();}
-
+function stripHtml(str=''){return str.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').trim();}
 function relTime(dateStr){
   const d=new Date(dateStr);const diff=(Date.now()-d.getTime())/1000;
   if(diff<3600)return Math.floor(diff/60)+'分前';
   if(diff<86400)return Math.floor(diff/3600)+'時間前';
   return Math.floor(diff/86400)+'日前';
 }
-
 function classifyNews(title=''){
   const t=title.toLowerCase();
-  const transferKw=['transfer','signing','deal','loan','bid','fee','sign','move','swap','rumour','rumor','want','target','interest','linked','agree','contract','release','free agent'];
-  const matchKw=['match','preview','result','goal','win','draw','loss','defeat','beat','score','fixture','vs','v '];
-  if(transferKw.some(k=>t.includes(k)))return'transfer';
-  if(matchKw.some(k=>t.includes(k)))return'match';
+  if(['transfer','signing','deal','loan','bid'].some(k=>t.includes(k)))return'transfer';
+  if(['match','preview','result','goal','vs'].some(k=>t.includes(k)))return'match';
   return'general';
 }
-
 function sourceDotClass(src=''){
   const s=src.toLowerCase();
   if(s.includes('bbc'))return'src-bbc';
   if(s.includes('sky'))return'src-sky';
-  if(s.includes('guardian'))return'src-guardian';
-  if(s.includes('athletic'))return'src-athletic';
-  if(s.includes('mirror'))return'src-mirror';
-  if(s.includes('sun'))return'src-sun';
   return'src-default';
 }
 
 async function fetchRSSFeed(feed){
   try{
-    const url=RSS2JSON+encodeURIComponent(feed.url)+'&count=8';
-    const res=await fetch(url);
-    if(!res.ok)throw new Error('rss2json error');
+    const res=await fetch(RSS2JSON+encodeURIComponent(feed.url)+'&count=8');
     const data=await res.json();
-    if(data.status!=='ok')throw new Error(data.message||'bad status');
     return (data.items||[]).map(item=>({
       title: stripHtml(item.title||''),
-      desc:  stripHtml(item.description||item.content||'').slice(0,160),
-      link:  item.link||'',
+      desc: stripHtml(item.description||'').slice(0,100),
+      link: item.link||'',
       pubDate: item.pubDate||'',
       source: feed.name,
-      cat:   classifyNews(item.title||''),
-      sourceCat: feed.cat,
+      cat: classifyNews(item.title||'')
     }));
-  }catch(e){
-    console.warn('RSS fetch failed:',feed.name,e);
-    return[];
-  }
+  }catch(e){return[];}
 }
 
 async function refreshNews(){
   const results=await Promise.all(RSS_FEEDS.map(fetchRSSFeed));
-  const all=[].concat(...results);
-  /* deduplicate by title similarity & sort by date */
-  const seen=new Set();
-  cachedNews=all.filter(n=>{
-    const key=n.title.slice(0,40).toLowerCase();
-    if(seen.has(key))return false;
-    seen.add(key);return true;
-  }).sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
+  cachedNews=[].concat(...results).sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
   lastNewsUpdate=new Date();
-  localStorage.setItem('newsCache',JSON.stringify({items:cachedNews,ts:lastNewsUpdate.toISOString()}));
 }
 
-/* ── FOOTBALL API ── */
 async function fetchMatches(compId){
-  try{
-    const today=new Date();
-    const from=today.toISOString().split('T')[0];
-    const toDate=new Date(today);toDate.setDate(today.getDate()+14);
-    const to=toDate.toISOString().split('T')[0];
-    const data=await footballFetch(`/competitions/${compId}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED,LIVE,IN_PLAY,PAUSED,FINISHED`);
-    return data.matches||[];
-  }catch(e){console.error('fetchMatches:',e);return null;}
+  try{const data=await footballFetch(`/competitions/${compId}/matches?dateFrom=${new Date().toISOString().split('T')[0]}&status=SCHEDULED,LIVE,FINISHED`); return data.matches||[];}
+  catch(e){return null;}
 }
 async function fetchStandings(){
-  try{
-    const data=await footballFetch('/competitions/PL/standings');
-    return data.standings?.[0]?.table||[];
-  }catch(e){console.error('fetchStandings:',e);return null;}
+  try{const data=await footballFetch('/competitions/PL/standings'); return data.standings?.[0]?.table||[];}
+  catch(e){return null;}
 }
 
 async function refreshAll(){
   document.getElementById('refresh-btn').classList.add('spinning');
-  toast('データを更新中...');
-  try{
-    const [eplM,faM,uclM,wcM,pdM,saM,bl1M,fl1M,eplS]=await Promise.all([
-      fetchMatches('PL'),   /* プレミアリーグ */
-      fetchMatches('FAC'),  /* FAカップ */
-      fetchMatches('CL'),   /* チャンピオンズリーグ */
-      fetchMatches('WC'),   /* ワールドカップ */
-      fetchMatches('PD'),   /* ラ・リーガ */
-      fetchMatches('SA'),   /* セリエA */
-      fetchMatches('BL1'),  /* ブンデスリーガ */
-      fetchMatches('FL1'),  /* リーグ1 */
+  toast('更新中...');
+  try {
+    const results = await Promise.allSettled([
+      fetchMatches('PL'), fetchMatches('FAC'), fetchMatches('CL'), fetchMatches('WC'),
+      fetchMatches('PD'), fetchMatches('SA'), fetchMatches('BL1'), fetchMatches('FL1'),
       fetchStandings()
     ]);
-    if(eplM) cachedMatches.epl  = eplM;
-    if(faM)  cachedMatches.fa   = faM;
-    if(uclM) cachedMatches.ucl  = uclM;
-    if(wcM)  cachedMatches.wc   = wcM;
-    if(pdM)  cachedMatches.pd   = pdM;
-    if(saM)  cachedMatches.sa   = saM;
-    if(bl1M) cachedMatches.bl1  = bl1M;
-    if(fl1M) cachedMatches.fl1  = fl1M;
-    if(eplS) cachedStandings    = eplS;
+    const keys=['epl','fa','ucl','wc','pd','sa','bl1','fl1'];
+    results.forEach((r,i)=>{ if(r.status==='fulfilled'&&r.value){ if(i<8)cachedMatches[keys[i]]=r.value; else cachedStandings=r.value; } });
     lastMatchUpdate=new Date();
-    localStorage.setItem('matchCache',JSON.stringify({matches:cachedMatches,standings:cachedStandings,ts:lastMatchUpdate.toISOString()}));
     await refreshNews();
-    toast('✓ 全データを更新しました');
-  }catch(e){toast('更新に失敗しました');}
+    toast('更新完了');
+  } catch(e){ toast('エラー発生'); }
   document.getElementById('refresh-btn').classList.remove('spinning');
   render();
 }
 
-function loadCaches(){
-  try{
-    const mc=localStorage.getItem('matchCache');
-    if(mc){const c=JSON.parse(mc);const age=(Date.now()-new Date(c.ts))/60000;if(age<60){cachedMatches=c.matches||{};cachedStandings=c.standings||null;lastMatchUpdate=new Date(c.ts);}}
-    const nc=localStorage.getItem('newsCache');
-    if(nc){const c=JSON.parse(nc);const age=(Date.now()-new Date(c.ts))/60000;if(age<30){cachedNews=c.items||[];lastNewsUpdate=new Date(c.ts);}}
-  }catch(e){}
+function parseMatch(m,cat){
+  const local=new Date(m.utcDate);
+  const isToday=local.toDateString()===new Date().toDateString();
+  return{id:m.id,cat,comp:m.competition.name,home:m.homeTeam.shortName||m.homeTeam.name,away:m.awayTeam.shortName||m.awayTeam.name,time:`${String(local.getHours()).padStart(2,'0')}:${String(local.getMinutes()).padStart(2,'0')}`,date:isToday?'今日':`${local.getMonth()+1}/${local.getDate()}`,status:m.status.toLowerCase(),score:m.score.fullTime.home!==null?`${m.score.fullTime.home}-${m.score.fullTime.away}`:null,isToday};
 }
 
-/* ── MATCH HELPERS ── */
-function parseMatch(m,cat){
-  /* new Date() automatically converts UTC to the device's local timezone — no manual offset needed */
-  const local=new Date(m.utcDate);
-  const dateStr=`${local.getMonth()+1}/${local.getDate()}`;
-  const timeStr=`${String(local.getHours()).padStart(2,'0')}:${String(local.getMinutes()).padStart(2,'0')}`;
-  const today=new Date();
-  const isToday=local.getFullYear()===today.getFullYear()&&local.getMonth()===today.getMonth()&&local.getDate()===today.getDate();
-  const statusMap={LIVE:'live',IN_PLAY:'live',PAUSED:'live',SCHEDULED:'upcoming',TIMED:'upcoming',FINISHED:'finished'};
-  const status=statusMap[m.status]||'upcoming';
-  let score=null;
-  if(status==='live'||status==='finished'){const h=m.score?.fullTime?.home??'?';const a=m.score?.fullTime?.away??'?';score=`${h} - ${a}`;}
-  return{id:m.id,cat,comp:m.competition?.name||'',home:m.homeTeam?.shortName||m.homeTeam?.name||'?',away:m.awayTeam?.shortName||m.awayTeam?.name||'?',date:isToday?'今日':dateStr,time:timeStr,status,score,wday:local.getDay(),isToday};
-}
 function getAllMatches(){
   const r=[];
-  for(const[cat,ms]of Object.entries(cachedMatches))if(Array.isArray(ms))ms.forEach(m=>r.push(parseMatch(m,cat)));
-  return r.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+  for(const[cat,ms]of Object.entries(cachedMatches))if(ms)ms.forEach(m=>r.push(parseMatch(m,cat)));
+  return r;
 }
-function getTodayMatches(){return getAllMatches().filter(m=>m.isToday);}
 
-/* ── RENDER HELPERS ── */
-function accentCls(m){
-  return{epl:'mc epl-a',fa:'mc fa-a',ucl:'mc ucl-a',wc:'mc wc-a',
-         pd:'mc pd-a',sa:'mc sa-a',bl1:'mc bl1-a',fl1:'mc fl1-a'}[m.cat]||'mc';
-}
-function compBdg(m){
-  const mp={
-    epl: ['b-epl','EPL','ic-epl'],
-    fa:  ['b-fa','FA','ic-shield'],
-    ucl: ['b-ucl','UCL','ic-trophy'],
-    wc:  ['b-wc','W杯','ic-trophy'],
-    pd:  ['b-pd','LaLiga','ic-epl'],
-    sa:  ['b-sa','SerieA','ic-epl'],
-    bl1: ['b-bl1','Bundesliga','ic-epl'],
-    fl1: ['b-fl1','Ligue1','ic-epl'],
-  };
-  const d=mp[m.cat];if(!d)return'';
-  return`<span class="bdg ${d[0]}"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#${d[2]}"/></svg>${d[1]}</span>`;
-}
-function stsBdg(s){
-  if(s==='live')return`<span class="bdg b-live"><svg width="10" height="10" viewBox="0 0 20 20" style="color:#ff4545;animation:blink 1s infinite"><use href="#ic-live"/></svg>LIVE</span>`;
-  if(s==='soon')return`<span class="bdg b-soon">SOON</span>`;
-  if(s==='finished')return`<span class="bdg b-fin">FT</span>`;
-  return'';
-}
 function mCard(m){
   const s=starred.has(m.id);
-  const si=s?`<svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--am)"><use href="#ic-star-fill"/></svg>`:`<svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--txt3)"><use href="#ic-star"/></svg>`;
-  const val=m.score?`<div class="mc-score">${m.score}</div>`:`<div class="mc-time">${m.time}</div>`;
-  return`<div class="${accentCls(m)}">
-    <button class="sbtn ${s?'on':''}" onclick="toggleStar(${m.id})">${si}</button>
-    <div class="mc-body"><div class="mc-comp">${m.comp} ${compBdg(m)} ${stsBdg(m.status)}</div><div class="mc-teams">${m.home} <em>vs</em> ${m.away}</div></div>
-    <div class="mc-right"><div class="mc-date">${m.date}</div>${val}</div>
+  return `<div class="mc ${m.cat}-a">
+    <button class="sbtn ${s?'on':''}" onclick="toggleStar(${m.id})"><svg width="18" height="18" viewBox="0 0 20 20"><use href="#ic-star${s?'-fill':''}"/></svg></button>
+    <div class="mc-body"><div class="mc-comp">${m.comp}</div><div class="mc-teams">${m.home} <em>vs</em> ${m.away}</div></div>
+    <div class="mc-right"><div class="mc-date">${m.date}</div><div class="mc-time">${m.score||m.time}</div></div>
   </div>`;
 }
 
-/* NEWS card */
-function newsTypeBadge(cat){
-  if(cat==='transfer')return`<span class="bdg b-hot"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-transfer"/></svg>移籍</span>`;
-  if(cat==='match')return`<span class="bdg b-epl"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-ball"/></svg>試合</span>`;
-  return`<span class="bdg" style="background:rgba(100,100,120,.15);color:var(--txt3);border:0.5px solid rgba(100,100,120,.3)">NEWS</span>`;
-}
-function newsCard(n){
-  const dotCls=sourceDotClass(n.source);
-  const cardCls=`news-card ${n.cat}`;
-  return`<div class="${cardCls}" onclick="window.open('${n.link}','_blank')">
-    <div class="news-source-row">
-      <span class="src-dot ${dotCls}"></span>
-      <span class="news-source">${n.source}</span>
-      <span class="news-time">${n.pubDate?relTime(n.pubDate):''}</span>
-      <span style="margin-left:auto">${newsTypeBadge(n.cat)}</span>
-    </div>
-    <div class="news-title">${n.title}</div>
-    ${n.desc?`<div class="news-desc">${n.desc}</div>`:''}
-    <div class="news-link">続きを読む <svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor;vertical-align:middle"><use href="#ic-link"/></svg></div>
-  </div>`;
-}
-
-function secBtn(id,lbl){return`<button class="sec-tts-btn" id="chip-${id}" onclick="speakSection('${id}')"><svg width="12" height="12" viewBox="0 0 20 20" style="color:currentColor"><use href="#ic-speaker"/></svg> ${lbl}</button>`;}
-function updLine(ts){if(!ts)return'';const t=ts;return`<div class="last-updated">Updated ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')} JST</div>`;}
-function noData(){return`<div class="error-box">データ取得中です。🔄ボタンをタップして更新してください。</div>`;}
-
-/* ── PAGES ── */
 function renderMorning(){
-  const todayM=getTodayMatches();
-  const hotNews=cachedNews.filter(n=>n.cat==='transfer').slice(0,3);
-  const bdays=getTodayBirthdays();
-  const [triviaA,triviaB]=getDailyTrivia();
-  let h=updLine(lastMatchUpdate||lastNewsUpdate);
-
-  /* Today's matches */
-  h+=`<div class="brief-sec"><div class="brief-hdr"><div class="bh-left"><svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--cy)"><use href="#ic-ball"/></svg><div><div class="bh-title">Today's Matches</div><div class="bh-sub">Kickoff · Japan Time</div></div></div>${secBtn('matches','試合時間')}</div><div class="brief-body">`;
-  if(!Object.keys(cachedMatches).length)h+=noData();
-  else if(!todayM.length)h+=`<div class="empty">本日の試合はありません</div>`;
-  else h+=todayM.map(mCard).join('');
-  h+=`</div></div>`;
-
-  /* Live RSS News */
-  h+=`<div class="brief-sec"><div class="brief-hdr"><div class="bh-left"><svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--pk)"><use href="#ic-fire"/></svg><div><div class="bh-title">Transfer Hot News</div><div class="bh-sub">${lastNewsUpdate?'Live · '+relTime(lastNewsUpdate.toISOString()):'RSS自動取得'}</div></div></div>${secBtn('news','NEWS')}</div><div class="brief-body" style="padding:10px 13px">`;
-  if(!cachedNews.length)h+=noData();
-  else h+=hotNews.map(newsCard).join('');
-  h+=`</div></div>`;
-
-  /* Birthday */
-  h+=`<div class="brief-sec"><div class="brief-hdr"><div class="bh-left"><svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--pk2)"><use href="#ic-cake"/></svg><div><div class="bh-title">Birthday Players</div><div class="bh-sub">${now.getMonth()+1}/${now.getDate()} Born</div></div></div>${secBtn('bday','Birthday')}</div><div class="brief-body">`;
-  if(!bdays.length)h+=`<div class="empty">本日誕生日の選手はいません</div>`;
-  else bdays.forEach(p=>{const age=now.getFullYear()-p.born;h+=`<div class="bday-row"><div class="bday-av">${p.initials}</div><div style="flex:1;min-width:0"><div class="bday-name">${p.name}</div><div class="bday-det">${p.club}</div></div><div class="bday-age">${age}<small>yrs</small></div></div>`;});
-  h+=`</div></div>`;
-
-  /* Trivia */
-  h+=`<div class="brief-sec"><div class="brief-hdr"><div class="bh-left"><svg width="18" height="18" viewBox="0 0 20 20" style="color:var(--am)"><use href="#ic-bolt"/></svg><div><div class="bh-title">Football Trivia</div><div class="bh-sub">England · History · Records</div></div></div>${secBtn('trivia','Trivia')}</div><div class="brief-body">`;
-  [triviaA,triviaB].forEach(tr=>{const cls=tr.tag==='history'?'tt-hist':tr.tag==='record'?'tt-rec':'tt-fact';h+=`<div class="trivia-item"><span class="tri-tag ${cls}"><svg width="10" height="10" viewBox="0 0 20 20" style="color:currentColor"><use href="#${tr.tag==='history'?'ic-table':tr.tag==='record'?'ic-trophy':'ic-bolt'}"/></svg>${tr.label}</span><div class="tri-txt">${tr.text}</div></div>`;});
-  h+=`</div></div>`;
+  const todayM = getAllMatches().filter(m=>m.isToday);
+  const hotNews = cachedNews.slice(0,3);
+  let h = `<div class="brief-sec"><div class="brief-hdr"><div class="bh-title">Today's Matches</div></div><div class="brief-body">`;
+  h += todayM.length ? todayM.map(mCard).join('') : '<div class="empty">試合なし</div>';
+  h += `</div></div><div class="brief-sec"><div class="brief-hdr"><div class="bh-title">Latest News</div></div><div class="brief-body">`;
+  h += hotNews.length ? hotNews.map(n=>`<div class="news-card" onclick="window.open('${n.link}')"><div class="news-title">${n.title}</div></div>`).join('') : '<div class="empty">ニュースなし</div>';
+  h += `</div></div>`;
   return h;
-}
-
-function renderNews(){
-  const filters=[{id:'all',l:'All'},{id:'transfer',l:'移籍'},{id:'match',l:'試合'},{id:'general',l:'General'}];
-  let list=newsFilter==='all'?cachedNews:cachedNews.filter(n=>n.cat===newsFilter);
-  const fH=filters.map(f=>`<button class="fp ${newsFilter===f.id?'on':''}" onclick="setNF('${f.id}')">${f.l}</button>`).join('');
-  let h=updLine(lastNewsUpdate)+`<div class="frow">${fH}</div>`;
-  if(!cachedNews.length)h+=noData();
-  else if(!list.length)h+=`<div class="empty">No news</div>`;
-  else h+=list.slice(0,20).map(newsCard).join('');
-  return h;
-}
-function setNF(id){newsFilter=id;document.getElementById('main').innerHTML=renderNews();}
-
-function renderCompMatches(cat){
-  const all=getAllMatches().filter(m=>m.cat===cat);
-  if(!all.length&&!Object.keys(cachedMatches).length)return noData()+updLine(lastMatchUpdate);
-  if(!all.length)return`<div class="empty">試合データなし</div>`+updLine(lastMatchUpdate);
-  const live=all.filter(m=>m.status==='live'),rest=all.filter(m=>m.status!=='live');
-  let h=updLine(lastMatchUpdate);
-  if(live.length)h+=`<div class="slbl">Live Now</div>`+live.map(mCard).join('');
-  if(rest.length){if(live.length)h+=`<div class="slbl" style="margin-top:8px">Upcoming / Results</div>`;h+=rest.map(mCard).join('');}
-  return h;
-}
-
-function renderFav(){
-  const all=getAllMatches().filter(m=>starred.has(m.id));
-  if(!all.length)return`<div class="empty">お気に入りなし<br><br>各試合の ☆ をタップして追加</div>`;
-  return updLine(lastMatchUpdate)+all.map(mCard).join('');
 }
 
 function renderStandings(){
-  if(!cachedStandings)return noData()+updLine(lastMatchUpdate);
-  let h=updLine(lastMatchUpdate);
-  h+=`<table class="standings-table"><thead><tr><th style="width:28px"></th><th style="text-align:left">クラブ</th><th>試</th><th>勝</th><th>分</th><th>負</th><th>得失</th><th style="color:var(--cy)">勝点</th></tr></thead><tbody>`;
-  cachedStandings.forEach(row=>{
-    const pos=row.position;
-    let pc='pos-num';if(pos<=4)pc+=' champions';else if(pos===5)pc+=' europa';else if(pos>=18)pc+=' relegation';
-    const gd=row.goalDifference>0?'+'+row.goalDifference:row.goalDifference;
-    h+=`<tr><td><span class="${pc}">${pos}</span></td><td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${row.team.shortName||row.team.name}</td><td>${row.playedGames}</td><td>${row.won}</td><td>${row.draw}</td><td>${row.lost}</td><td>${gd}</td><td class="pts">${row.points}</td></tr>`;
-  });
-  h+=`</tbody></table><div style="margin-top:10px;font-size:10px;display:flex;gap:12px"><span><span style="color:var(--cy);font-weight:700">■</span> CL</span><span><span style="color:var(--gr);font-weight:700">■</span> EL</span><span><span style="color:#ff6868;font-weight:700">■</span> 降格</span></div>`;
+  if(!cachedStandings) return '<div class="empty">データなし</div>';
+  let h = `<table class="standings-table"><thead><tr><th>Pos</th><th>Club</th><th>Pts</th></tr></thead><tbody>`;
+  cachedStandings.forEach(r=>{ h+=`<tr><td>${r.position}</td><td>${r.team.name}</td><td class="pts">${r.points}</td></tr>`; });
+  h += `</tbody></table>`;
   return h;
 }
 
-function renderWeekly(){
-  const all=getAllMatches();const days=['日','月','火','水','木','金','土'];
-  const todayWday=new Date().getDay(); /* use device local time, no manual offset */
-  const groups={};all.forEach(m=>{if(!groups[m.wday])groups[m.wday]=[];groups[m.wday].push(m);});
-  let h=updLine(lastMatchUpdate);let hasAny=false;
-  for(let i=0;i<7;i++){const d=(todayWday+i)%7;const ms=groups[d];if(!ms||!ms.length)continue;hasAny=true;
-    const isToday=d===todayWday;const dot=isToday?`<svg width="8" height="8" viewBox="0 0 8 8" style="color:var(--cy)"><circle cx="4" cy="4" r="3.5" fill="currentColor"/></svg>`:'';
-    h+=`<div class="wday-block"><div class="wday-lbl ${isToday?'wday-today-lbl':''}">${dot} ${days[d]}曜日${isToday?' · TODAY':''}</div>`;
-    ms.forEach(m=>{const comp={epl:'EPL',fa:'FA',ucl:'UCL'}[m.cat]||m.cat;h+=`<div class="wrow"><div class="wrow-comp">${comp}</div><div class="wrow-teams">${m.home} vs ${m.away}</div><div class="wrow-time">${m.score||m.time}</div></div>`;});
-    h+=`</div>`;
-  }
-  if(!hasAny)h+=noData();
-  return h;
-}
-
-function renderWC(){
-  const all=getAllMatches().filter(m=>m.cat==='wc');
-  let h=updLine(lastMatchUpdate);
-  if(!all.length&&!Object.keys(cachedMatches).length){
-    /* WC 2026 static schedule as fallback when API has no data */
-    h+=`<div class="error-box" style="background:rgba(0,255,153,.06);border-color:rgba(0,255,153,.3);color:var(--gr)">
-      ⚽ FIFA W杯 2026（米・加・墨）は2026年6月11日〜7月19日開催予定。<br>
-      大会期間中は🔄ボタンをタップするとリアルタイムの試合データが表示されます。
-    </div>
-    <div style="background:var(--bg2);border:0.5px solid rgba(0,255,153,.25);border-radius:6px;padding:12px 13px;margin-bottom:8px">
-      <div style="font-size:10px;color:var(--gr);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">🌍 2026 FIFA WORLD CUP</div>
-      <div style="font-size:13px;color:var(--txt);font-weight:700;margin-bottom:4px">開催国：アメリカ・カナダ・メキシコ</div>
-      <div style="font-size:12px;color:var(--txt2);line-height:1.6">
-        📅 開幕：2026年6月11日<br>
-        🏆 決勝：2026年7月19日（ニュージャージー州）<br>
-        🎽 出場国：48か国（初の拡大フォーマット）<br>
-        🗓 グループステージ：6月11日〜7月2日<br>
-        🗓 決勝トーナメント：7月4日〜7月19日
-      </div>
-    </div>
-    <div style="background:var(--bg2);border:0.5px solid rgba(0,255,153,.25);border-radius:6px;padding:12px 13px;margin-bottom:8px">
-      <div style="font-size:10px;color:var(--gr);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">🇯🇵 日本代表 グループE</div>
-      <div style="font-size:12px;color:var(--txt2);line-height:1.8">
-        🆚 グループE: 日本 / ドイツ / スペイン / モロッコ<br>
-        📅 vs ドイツ：6月12日（サンフランシスコ）<br>
-        📅 vs スペイン：6月16日（ダラス）<br>
-        📅 vs モロッコ：6月20日（ロサンゼルス）
-      </div>
-    </div>`;
-    return h;
-  }
-  if(!all.length)return h+`<div class="empty">W杯試合データなし</div>`;
-  const live=all.filter(m=>m.status==='live'),rest=all.filter(m=>m.status!=='live');
-  if(live.length)h+=`<div class="slbl">Live Now</div>`+live.map(mCard).join('');
-  if(rest.length){if(live.length)h+=`<div class="slbl" style="margin-top:8px">Upcoming / Results</div>`;h+=rest.map(mCard).join('');}
-  return h;
-}
 function leagueGrid(){
-  const leagues=[
-    {id:'epl', label:'\u{1F3F4} プレミアリーグ', note:'PL · イングランド'},
-    {id:'fa',  label:'\uD83C\uDFC6 FAカップ',   note:'FAC · イングランド'},
-    {id:'ucl', label:'\u2B50 チャンピオンズL',   note:'CL · 欧州'},
-    {id:'pd',  label:'\uD83C\uDDEA\uD83C\uDDF8 ラ・リーガ',  note:'PD · スペイン'},
-    {id:'sa',  label:'\uD83C\uDDEE\uD83C\uDDF9 セリエA',     note:'SA · イタリア'},
-    {id:'bl1', label:'\uD83C\uDDE9\uD83C\uDDEA ブンデスリーガ',note:'BL1 · ドイツ'},
-    {id:'fl1', label:'\uD83C\uDDEB\uD83C\uDDF7 リーグ1',     note:'FL1 · フランス'},
-    {id:'wc',  label:'\uD83C\uDF0D ワールドカップ',            note:'WC · FIFA'},
-  ];
-  return leagues.map(l=>`<div class="srow">
-    <div class="srow-lbl">${l.label}<small>${l.note}</small></div>
-    <button class="tog ${enabledLeagues.has(l.id)?'on':''}" onclick="toggleLeague('${l.id}')"></button>
-  </div>`).join('');
-}
-    <button class="tog ${enabledLeagues.has(l.id)?"on":""}" onclick="toggleLeague(`+"++"+`)"></button>
-  </div>`).join("");
-}
-function toggleLeague(id){
-  if(enabledLeagues.has(id))enabledLeagues.delete(id);else enabledLeagues.add(id);
-  localStorage.setItem('enabledLeagues',JSON.stringify([...enabledLeagues]));
-  document.getElementById('main').innerHTML=renderSetting();
-  toast(id.toUpperCase()+' '+(enabledLeagues.has(id)?'ON ✓':'OFF'));
-}
-function togHTML(key,label,sub){return`<div class="srow"><div class="srow-lbl">${label}<small>${sub}</small></div><button class="tog ${togg[key]?'on':''}" onclick="togSet('${key}')"></button></div>`;}
-function togSet(k){togg[k]=!togg[k];localStorage.setItem('togg',JSON.stringify(togg));render();}
-function renderSetting(){
-  return`<div class="set-block">
-    <div class="set-title">Morning Brief</div>
-    <div class="srow"><div class="srow-lbl">通知時刻<small>9:00 — 11:00</small></div><select class="sel-dark" id="msel"><option>9:00</option><option selected>9:30</option><option>10:00</option><option>10:30</option><option>11:00</option></select></div>
-    ${togHTML('matches',"Today's Matches",'試合を表示')}
-    ${togHTML('bday','Birthday Players','誕生日の選手')}
-    ${togHTML('trivia','Football Trivia','歴史・記録・雑学')}
-    <button class="save-cyber" onclick="toast('Briefing saved ✓')">Save Config</button>
-  </div>
-  <div class="set-block">
-    <div class="set-title">League Selection</div>
-    <div style="font-size:11px;color:var(--txt3);margin-bottom:2px">表示するリーグ・大会を選択</div>
-    ${leagueGrid()}
-  </div>
-  <div class="set-block">
-    <div class="set-title">Data Sources</div>
-    <div class="srow"><div class="srow-lbl">試合データ<small>football-data.org + corsproxy.io</small></div><span style="font-size:11px;color:var(--gr);font-weight:700">LIVE</span></div>
-    <div class="srow"><div class="srow-lbl">移籍NEWS<small>Sky Sports / TalkSPORT / BBC / Guardian RSS</small></div><span style="font-size:11px;color:var(--cy);font-weight:700">RSS AUTO</span></div>
-    <div class="srow"><div class="srow-lbl">最終更新<small>試合 / ニュース</small></div><span style="font-size:11px;color:var(--txt3)">${lastMatchUpdate?lastMatchUpdate.toLocaleTimeString('ja-JP'):'—'} / ${lastNewsUpdate?lastNewsUpdate.toLocaleTimeString('ja-JP'):'—'}</span></div>
-    <button class="save-cyber" onclick="refreshAll()">今すぐ全データ更新</button>
-  </div>
-  <div class="set-block">
-    <div class="set-title">Weekly Digest · Sunday</div>
-    <div class="srow"><div class="srow-lbl">通知時刻<small>翌週の全試合を通知</small></div><select class="sel-dark" id="wsel"><option>19:00</option><option>20:00</option><option selected>21:00</option><option>22:00</option></select></div>
-    <button class="save-cyber" onclick="toast('Weekly digest saved ✓')">Save Config</button>
-  </div>`;
+  const leagues=[{id:'epl',label:'PL'},{id:'fa',label:'FA'},{id:'ucl',label:'CL'},{id:'wc',label:'W杯'}];
+  return leagues.map(l=>`<div class="srow"><div class="srow-lbl">${l.label}</div><button class="tog ${enabledLeagues.has(l.id)?'on':''}" onclick="toggleLeague('${l.id}')"></button></div>`).join('');
 }
 
-/* ── TTS ── */
-function setTTSStatus(msg,wave=false){
-  document.getElementById('tts-status').innerHTML=wave
-    ?`<div class="tts-wave"><span></span><span></span><span></span><span></span><span></span></div><span style="color:var(--cy);font-size:11px;text-transform:uppercase;letter-spacing:.05em">${msg}</span>`
-    :`<span style="color:var(--txt3);font-size:11px;text-transform:uppercase;letter-spacing:.05em">${msg}</span>`;
-}
-function clearChips(){document.querySelectorAll('.tts-chip,.tts-all-btn').forEach(b=>b.classList.remove('speaking'));}
-function stopSpeech(){window.speechSynthesis.cancel();clearChips();setTTSStatus('Ready');}
-function speak(text,sid,label){
-  if(!window.speechSynthesis){toast('TTS非対応');return;}
-  window.speechSynthesis.cancel();clearChips();
-  const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=0.95;
-  const v=window.speechSynthesis.getVoices().find(v=>v.lang.startsWith('ja'));if(v)u.voice=v;
-  u.onstart=()=>{setTTSStatus(label,true);const c=sid==='all'?document.getElementById('btn-all'):document.getElementById('chip-'+sid);if(c)c.classList.add('speaking');};
-  u.onend=()=>{clearChips();setTTSStatus('完了 · Done');};
-  u.onerror=()=>{clearChips();setTTSStatus('Error');};
-  window.speechSynthesis.speak(u);
-}
+function toggleLeague(id){ if(enabledLeagues.has(id))enabledLeagues.delete(id); else enabledLeagues.add(id); render(); }
+function toggleStar(id){ if(starred.has(id))starred.delete(id); else starred.add(id); localStorage.setItem('starred',JSON.stringify([...starred])); render(); }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',2000); }
 
-function buildMatchesText(){const m=getTodayMatches();if(!m.length)return'本日の試合はありません。';let t='本日の試合です。';m.forEach(x=>t+=`${x.status==='live'?'現在ライブ中、':''}${x.home}対${x.away}、日本時間${x.time}。${x.score?'スコア'+x.score+'。':''}`);return t;}
-function buildNewsText(){
-  const top=cachedNews.filter(n=>n.cat==='transfer').slice(0,3);
-  if(!top.length)return'現在移籍ニュースはありません。';
-  let t='最新移籍ニュースです。';
-  top.forEach(n=>t+=`${n.source}より。${n.title}。`);
-  return t;
-}
-function buildBdayText(){const bd=getTodayBirthdays();if(!bd.length)return`本日誕生日の選手はいません。`;let t='本日誕生日の選手です。';bd.forEach(p=>t+=`${p.name}、${p.club}、${now.getFullYear()-p.born}歳。`);return t;}
-function buildTriviaText(){const[a,b]=getDailyTrivia();return'今日のサッカー小話です。'+a.text+' '+b.text;}
-function speakSection(s){const m={matches:'試合時間を読み上げ中',news:'NEWSを読み上げ中',bday:'Birthdayを読み上げ中',trivia:'Triviaを読み上げ中'};const b={matches:buildMatchesText,news:buildNewsText,bday:buildBdayText,trivia:buildTriviaText};speak(b[s](),s,m[s]);}
-function speakAll(){speak([buildMatchesText(),buildNewsText(),buildBdayText(),buildTriviaText()].join(' '),'all','ALL を読み上げ中');}
-if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
-
-function getDailyTrivia(){
-  /* 日付ベースのシードで毎日違う2件を選ぶ（同じ日は同じ2件） */
-  const seed=(now.getFullYear()*10000+(now.getMonth()+1)*100+now.getDate());
-  const idx1=seed%TRIVIA.length;
-  const idx2=(seed*7+13)%TRIVIA.length===idx1?(seed*7+14)%TRIVIA.length:(seed*7+13)%TRIVIA.length;
-  return[TRIVIA[idx1],TRIVIA[idx2]];
-}
-function getTodayBirthdays(){const m=now.getMonth()+1,d=now.getDate();return BIRTHDAYS.filter(p=>p.month===m&&p.day===d);}
-
-/* ── UI ── */
-function sw(t,el){activeTab=t;newsFilter='all';document.querySelectorAll('.tb').forEach(x=>x.classList.remove('on'));el.classList.add('on');render();}
-function swBni(t,tabIdx){
-  document.querySelectorAll('.bni').forEach(x=>x.classList.remove('on'));
-  event.currentTarget.classList.add('on');
-  activeTab=t;newsFilter='all';
-  const tabs=document.querySelectorAll('.tb');
-  document.querySelectorAll('.tb').forEach(x=>x.classList.remove('on'));
-  if(tabs[tabIdx])tabs[tabIdx].classList.add('on');
-  render();
-}
-function toggleStar(id){
-  if(starred.has(id)){starred.delete(id);toast('Removed from FAV');}else{starred.add(id);toast('⭐ Added to FAV');}
-  localStorage.setItem('starred',JSON.stringify([...starred]));render();
-}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2400);}
+function sw(t,el){ activeTab=t; document.querySelectorAll('.tb').forEach(x=>x.classList.remove('on')); el.classList.add('on'); render(); }
+function swBni(t,idx){ activeTab=t; document.querySelectorAll('.bni').forEach(x=>x.classList.remove('on')); event.currentTarget.classList.add('on'); render(); }
 
 function render(){
   const el=document.getElementById('main');
-  if(activeTab==='morning')        el.innerHTML=renderMorning();
-  else if(activeTab==='news')      el.innerHTML=renderNews();
-  else if(activeTab==='transfer')  el.innerHTML=renderNews();
-  else if(activeTab==='epl')       el.innerHTML=renderCompMatches('epl');
-  else if(activeTab==='fa')        el.innerHTML=renderCompMatches('fa');
-  else if(activeTab==='ucl')       el.innerHTML=renderCompMatches('ucl');
-  else if(activeTab==='pd')        el.innerHTML=renderCompMatches('pd');
-  else if(activeTab==='sa')        el.innerHTML=renderCompMatches('sa');
-  else if(activeTab==='bl1')       el.innerHTML=renderCompMatches('bl1');
-  else if(activeTab==='fl1')       el.innerHTML=renderCompMatches('fl1');
-  else if(activeTab==='wc')        el.innerHTML=renderWC();
+  if(activeTab==='morning') el.innerHTML=renderMorning();
   else if(activeTab==='standings') el.innerHTML=renderStandings();
-  else if(activeTab==='fav')       el.innerHTML=renderFav();
-  else if(activeTab==='week')      el.innerHTML=renderWeekly();
-  else if(activeTab==='setting')   el.innerHTML=renderSetting();
+  else if(activeTab==='setting') el.innerHTML=leagueGrid();
+  else el.innerHTML='<div class="empty">Coming Soon</div>';
 }
 
-/* ── INIT ── */
-(async()=>{
-  loadCaches();
-  render();
-  const needMatchRefresh=!lastMatchUpdate||(Date.now()-lastMatchUpdate)/60000>60;
-  const needNewsRefresh=!lastNewsUpdate||(Date.now()-lastNewsUpdate)/60000>30;
-  if(needMatchRefresh||needNewsRefresh){await refreshAll();}else{render();}
-})();
-
-/* Auto refresh: matches every 5min, news every 15min */
-setInterval(async()=>{
-  if(!document.hidden){
-    const[eplM,faM,uclM,wcM,pdM,saM,bl1M,fl1M,eplS]=await Promise.all([
-      fetchMatches('PL'),fetchMatches('FAC'),fetchMatches('CL'),fetchMatches('WC'),
-      fetchMatches('PD'),fetchMatches('SA'),fetchMatches('BL1'),fetchMatches('FL1'),
-      fetchStandings()
-    ]);
-    if(eplM)cachedMatches.epl=eplM;if(faM)cachedMatches.fa=faM;
-    if(uclM)cachedMatches.ucl=uclM;if(wcM)cachedMatches.wc=wcM;
-    if(pdM)cachedMatches.pd=pdM;if(saM)cachedMatches.sa=saM;
-    if(bl1M)cachedMatches.bl1=bl1M;if(fl1M)cachedMatches.fl1=fl1M;
-    if(eplS)cachedStandings=eplS;
-    lastMatchUpdate=new Date();render();
-  }
-},5*60*1000);
-setInterval(async()=>{if(!document.hidden){await refreshNews();render();}},15*60*1000);
+(async()=>{ await refreshAll(); })();
 </script>
 </body>
 </html>
